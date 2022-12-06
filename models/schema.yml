@@ -1,0 +1,519 @@
+version: 2
+
+sources:
+
+  - name: staging
+    description: staging tables gathering cosolidated data from customer schemas
+    tables:
+      - name: warehouse_orders
+        description: The warehouse_orders table contains information for customer orders, including order number, patient ID, and staff ID
+        columns:
+        - name: id
+          description: order id
+        - name: number
+          description: order number as in IO
+        - name: patient_id
+          description: ID that is associated with the patient
+        - name: type
+          description: order type in terms of ordering and receiving mechanics; can be delivery, on_demand, pickup, walkin, or mail_delivery
+        - name: status
+          description: order status in terms of order completion flow; can be completed, partial, or returned
+        - name: order_status
+          description: order status in terms of whether the order is completed or canceled
+        - name: payment_status
+          description: can be paid_in_full, partially_paid, partially_refunded, or refunded
+        - name: fulfillment_status
+          description: 1 for unfulfilled, 2 for processing, 3 for fulfilled
+        - name: shipment_status
+          description: IRRELEVANT
+        - name: created_at
+          description: IRRELEVANT
+        - name: updated_at
+          description: IRRELEVANT
+        - name: charge_by
+          description: DEPRECATED
+        - name: amount
+          description: order amount before taxes
+        - name: referral_discount_value
+          description: DEPRECATED
+        - name: discount_type_bak
+          description: DEPRECATED
+        - name: total_amount
+          description: order amount including taxes
+        - name: discount_has_changed
+          description: whether a custom discount was applied to the order
+        - name: office_id
+          description: unique ID for the office associated with the order
+        - name: sum_tax
+          description: the full amount of tax calculated for the order
+        - name: sum_discount
+          description: the amount of all the discounts applied to the order and order items
+        - name: sum_free_discount
+          description: IRRELEVANT
+        - name: sum_income
+          description: order margin
+        - name: custom_discount_value
+          description: discount value expressed in custom discount type value
+        - name: custom_discount_value_bak
+          description: DEPRECATED
+        - name: delivery_address
+          description: IRRELEVANT
+        - name: delivery_city
+          description: IRRELEVANT
+        - name: delivery_state
+          description: IRRELEVANT
+        - name: delivery_zip
+          description: IRRELEVANT
+        - name: delivery_phone
+          description: IRRELEVANT
+        - name: delivery_latitude
+          description: IRRELEVANT
+        - name: delivery_longitude
+          description: IRRELEVANT
+        - name: shipping_method_id
+          description: IRRELEVANT
+        - name: shipping_amount
+          description: IRRELEVANT
+        - name: courier_register_id
+          description: IRRELEVANT
+        - name: comment
+          description: comment
+        - name: sync_updated_at
+          description: date and time when the record was updated the last time
+        - name: sync_created_at
+          description: date and time when the record appeared in the table initially
+        - name: register_id
+          description: reference to involved register ID 
+        - name: discount_id
+          description: reference to discount ID if the discount is preset
+        - name: referral_discount_type
+          description: 2 for FIXED, 3 for PERCENT
+        - name: custom_discount_type
+          description: 2 for FIXED, 3 for PERCENT
+        - name: balance
+          description: debt/duty on the complete order if it is not paid or partially paid
+        - name: method1_amount
+          description: payment amount which is received from the patient in cash
+        - name: method2_amount
+          description: payment amount which is received from the patient via credit card
+        - name: method3_amount
+          description: payment amount which is received from the patient via check
+        - name: method4_amount
+          description: payment amount which is received from the patient via CC terminal
+        - name: method5_amount
+          description: payment amount which is received from the patient in bonuses
+        - name: method6_amount
+          description: payment amount which is received from the patient in Potify bonuses
+        - name: method7_amount
+          description: payment amount which is received from the patient via DC terminal
+        - name: processing_register_id
+          description: DEPRECATED
+        - name: photo
+          description: DEPRECATED
+        - name: delivery_datetime
+          description: IRRELEVANT
+        - name: delivery_addess_id
+          description: IRRELEVANT
+        - name: change_amount
+          description: the amount of change out of the drawer
+        - name: tip_amount
+          description: the amount of tips from the patient
+        - name: place_at
+          description: date and time of initiating the order in the indica system
+        - name: completed_at
+          description: DEPRECATED
+        - name: confirmed_at
+          description: date and time when the order was confirmed in the indica system
+        - name: is_bonus_point_as_discount
+          description: DEPRECATED
+        - name: preferred_payment_method
+          description: DEPRECATED
+        - name: marketplace
+          description: 1 for POS, 2 for e-commerce, 3 for sweede, 4 for offline POS, 5 for weedmaps, 6 for openAPI
+        - name: applied_potify_credits
+          description: DEPRECATED
+        - name: asap_delivery
+          description: IRRELEVANT
+        - name: cashier_id
+          description: reference to cashier ID
+        - name: is_transit_started
+          description: DEPRECATED
+        - name: metrc_status
+          description: can be awaiting, error, retried, success or NULL
+        - name: cashier_name
+          description: cashier name
+        - name: patient_type
+          description: 1 for MEDICAL_WITH_REC, 2 for RECREATIONAL, 3 for MEDICAL_WITH_STATE_CARD
+        - name: register_name
+          description: the name of the register involved
+        - name: courier_id
+          description: IRRELEVANT
+        - name: courier_name
+          description: IRRELEVANT
+        - name: courier_register_name
+          description: IRRELEVANT
+        - name: is_verified_by_courier
+          description: IRRELEVANT
+        - name: is_shipped
+          description: IRRELEVANT
+        - name: shipping_tracking_number
+          description: IRRELEVANT
+        - name: patient_has_caregiver
+          description: whether the patient has caregiver or not
+        - name: patient_is_tax_exempt
+          description: whether the patient is tax exempt
+        - name: pos_mode
+          description: in-store if marketplace=1 else NULL
+        - name: metrc_substatus
+          description: staff_api_key_error if the error took place else NULL
+        - name: checkout_staff_id
+          description: unique ID that is associated with the employee that made the checkout
+        - name: signature
+          description: IRRELEVANT
+        - name: delivery_method
+          description: IRRELEVANT
+        - name: courier_number
+          description: IRRELEVANT
+        - name: patient_rec_number
+          description: number of patient recommendation
+        - name: office_zip_name
+          description: office zip code
+        - name: refund_type
+          description: can be partial or full for refunded orders, else equals none
+        - name: returned_at
+          description: date and time of refund if refunded else NULL
+        - name: shipping_method_name
+          description: IRRELEVANT
+        - name: tax_tier_version_id
+          description: unique ID of the tax tier applied
+        - name: vehicle
+          description: IRRELEVANT
+        - name: metrc_delivery_status
+          description: IRRELEVANT
+        - name: resend_staff_id
+          description: reference to staff ID if resent to Metrc
+        - name: delivery_estimated_time_of_arrival
+          description: IRRELEVANT
+
+      - name: warehouse_order_items
+        description: The warehouse_order_items table contains information for customer orders items, including the order_id, product_id, price, quantity, etc.
+        columns:
+        - name: id
+          description: unique order item ID
+        - name: order_id
+          description: ID that is associated with the order
+        - name: product_id
+          description: ID that is associated with the product
+        - name: name
+          description: product name
+        - name: descr
+          description: product description
+        - name: price_type
+          description: piece or weight
+        - name: price_per
+          description: piece, gram or none
+        - name: charge_by
+          description: DEPRECATED
+        - name: price
+          description: cost per unit of product
+        - name: qty
+          description: 1 for piece products or product weight there is a charge for; if there is some qty then qty_free is always 0
+        - name: qty_free
+          description: 1 for piece products or product weight free of charge; if there is some qty_free then qty is always 0
+        - name: amount
+          description: order item amount after taxes
+        - name: tax
+          description: tax amount
+        - name: discount_value
+          description: discount value expressed in discount type value
+        - name: discount_type_bak
+          description: DEPRECATED
+        - name: total_amount
+          description: the total order item amount
+        - name: created_at
+          description: IRRELEVANT
+        - name: updated_at
+          description: IRRELEVANT
+        - name: is_charge_by_order
+          description: IRRELEVANT
+        - name: is_free
+          description: IRRELEVANT
+        - name: free_discount
+          description: IRRELEVANT
+        - name: income
+          description: order item margin
+        - name: discount_amount
+          description: discount amount
+        - name: item_type
+          description: gram, joint or prepack
+        - name: count
+          description: item quantity
+        - name: special_id
+          description: IRRELEVANT
+        - name: special_item_id
+          description: IRRELEVANT
+        - name: is_half_eighth
+          description: DEPRECATED
+        - name: is_returned
+          description: whether the item was returned or not
+        - name: returned_amount
+          description: returned amount
+        - name: discount_type
+          description: 2 for FIXED, 3 for PERCENT
+        - name: free_amount
+          description: the amount that was not charged due to discount
+        - name: paid_amount
+          description: the amount of money paid by the patient for the item
+        - name: wcii_cart_item
+          description: DEPRECATED
+        - name: sync_created_at
+          description: date and time when the record appeared in the table initially
+        - name: sync_updated_at
+          description: date and time when the record was updated the last time
+        - name: product_checkin_id
+          description: reference to checkin ID
+        - name: is_excise
+          description: whether it is an excise-applied product
+        - name: returned_at
+          description: date and time of return if returned else NULL
+        - name: is_marijuana_product
+          description: whether it is a cannabis-based product
+        - name: product_is_tax_exempt
+          description: whether it is a product that is not to be taxed
+        - name: is_metrc
+          description: whether it is a product that is to be tracked by Metrc
+        - name: is_under_package_control
+          description: whether it is a package under control 
+        - name: base_amount
+          description: order item amount if the product has a special price
+        - name: discount_id
+          description: reference to discount ID if the discount is preset
+        - name: delivery_tax
+          description: IRRELEVANT
+        - name: discount_count
+          description: number of discounts applied to the item
+        - name: is_exchanged
+          description: whether the item was exchanged for another one
+        - name: exchanged_at
+          description: date and time when the item was exchanged
+        - name: product_brutto_weight
+          description: DEPRECATED
+        - name: product_brutto_weight_validation
+          description: whether weight validation took place or not
+
+      - name: warehouse_order_logs
+        description: order log describing all the steps the order takes on its path to patient
+        columns:
+        - name: id
+          description: unique ID for the log record
+        - name: order_id
+          description: reference to order ID
+        - name: type
+          description: |
+            0 for INIT                         
+            1 for PENDING                      
+            2 for ACCEPTED                     
+            3 for DECLINED                     
+            4 for ASSIGNED                     
+            5 for NOT_HOME                     
+            6 for CANCELED                     
+            7 for DELIVERED                     
+            8 for COMPLETED                    
+            9 for RETURNED                     
+            10 for REASSIGNED                   
+            11 for FULFILLING_STARTED           
+            12 for FULFILLING_STOPPED           
+            13 for FULFILLED                    
+            14 for REFUNDED                     
+            15 for SHIPPED                      
+            16 for FULFILLING_TIMEOUT           
+            17 for METRIC_LIMIT_EXCEEDED        
+            18 for INDICA_LIMIT_EXCEEDED        
+            19 for DELIVERY_STARTED             
+            20 for DELIVERY_STOPPED             
+            21 for REJECTED                     
+            22 for PARTIAL                      
+            23 for ITEM_ADDED                   
+            24 for ITEM_REMOVED                 
+            25 for ITEM_QTY_CHANGED             
+            26 for CART_SIMPLE_DISCOUNT_ADDED   
+            27 for CART_CUSTOM_DISCOUNT_ADDED   
+            28 for STORE_CREDIT_APPLIED         
+            29 for ALL_DISCOUNTS_REMOVED        
+            30 for ITEM_CUSTOM_DISCOUNT_ADDED   
+            31 for ITEM_CUSTOM_DISCOUNT_REMOVED 
+            32 for ITEM_MARKED_AS_FREE          
+            33 for CART_CUSTOM_DISCOUNT_CHANGED 
+            34 for CART_SIMPLE_DISCOUNT_CHANGED 
+            35 for OFFICE_NAME_CHANGED          
+            36 for DELIVERY_ADDRESS_CHANGED     
+            37 for DELIVERY_TIME_CHANGED        
+            38 for NOTE_MODIFIED               
+            39 for DELIVERY_ACCEPTED            
+            40 for ITEM_SIMPLE_DISCOUNT_ADDED   
+            41 for ITEM_SIMPLE_DISCOUNT_REMOVED 
+            42 for CART_SIMPLE_DISCOUNT_REMOVED 
+            43 for EXCHANGED                    
+            44 for METRC_SENDER_CHANGED         
+        - name: sf_guard_user_id
+          description: reference to involved employee ID
+        - name: sf_guard_user_name
+          description: involved employee name
+        - name: order_courier_register_id
+          description: IRRELEVANT
+        - name: order_courier_register_name
+          description: IRRELEVANT
+        - name: order_courier_register_id_old
+          description: IRRELEVANT
+        - name: order_courier_register_name_old
+          description: IRRELEVANT
+        - name: patient_id
+          description: reference to patient ID if employee involved
+        - name: patient_name
+          description: DEPRECATED
+        - name: created_at
+          description: date and time when the record appeared in the table initially
+        - name: additional_data
+          description: comments
+        - name: register_id
+          description: reference to involved register ID 
+        - name: register_name
+          description: the name of the register involved
+        - name: application
+          description: can be POS or INDICA_ONLINE
+
+      - name: products
+        description: consolidated products
+
+      - name: product_categories
+        description: consolidated product categories
+
+      - name: product_vendors
+        description: consolidated product vendors
+
+      - name: tax_payment
+        description: consolidated tax payments
+
+      - name: brands
+        description: consolidated brands
+
+      - name: patients
+        description: consolidated patients
+
+      - name: patient_group
+        description: consolidated patient groups
+
+      - name: patient_group_ref
+        description: consolidated patient to patient group mapping
+
+      - name: product_transactions
+        description: consolidated product transactions
+
+      - name: product_audit
+        description: consolidated product audits
+
+      - name: product_audit_item
+        description: consolidated product audit items
+
+      - name: company_config
+        description: consolidated company_config
+
+      - name: register
+        description: consolidated registers info
+
+      - name: register_log
+        description: consolidated register log
+
+      - name: discounts
+        description: consolidated discounts
+
+      - name: sf_guard_user
+        description: consolidated users
+
+  - name: ext_indica_backend
+    description: This is a backend external schema
+    tables:
+
+      - name: company_limits_audit_log
+        description: limits audit log
+
+      - name: city
+        description: city
+
+      - name: companies
+        description: companies
+
+      - name: offices
+        description: offices
+
+      - name: state
+        description: state
+
+      - name: country
+        description: country
+
+      - name: timezone
+        description: timezone
+
+      - name: package
+        description: package
+
+
+models:
+
+  - name: int_products_with_details
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - prod_id
+
+  - name: orders_with_details
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - id
+
+  - name: order_items_with_details
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - id
+
+  - name: daily_inventory
+    description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
+    columns:
+    - name: domain_prefix
+      description: Company account name
+    - name: comp_id
+      description: Company ID
+    - name: report_date
+      description: The date is based on transactions that took place within it
+    - name: office_id
+      description: ID of the store where transactions happened
+    - name: product_id
+      description: ID of the product which was involved in transactions
+    - name: check_in
+      description: Number of grams of the product that was checked in in this store
+    - name: transfer_in
+      description: Number of grams of the product that was moved to this store and the product from another store but the same product
+    - name: transfer_out
+      description: Number of grams of the product that was moved from this store and product to another store but the same product
+    - name: transfer_in_another_product
+      description: Number of grams of the product that was moved to this store and the product from other product
+    - name: transfer_out_another_product
+      description: Number of grams of the product that was moved from this store and product to another product
+    - name: adjusted_increase
+      description: Number of grams of the product for which product quantity was increased
+    - name: adjusted_decrease
+      description: Number of grams of the product for which product quantity was decreased
+    - name: sell
+      description: Number of grams of the product that was sold in this store
+    - name: return
+      description: Number of grams of the product that was returned in this store
+    - name: inventory_turnover
+      description: Sum of number of grams for all transactions that happened in this store, product, date     
+    - name: end_of_day_inventory
+      description: The stocks level of the product in this store on this date    
