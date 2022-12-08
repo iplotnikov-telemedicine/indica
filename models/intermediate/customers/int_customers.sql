@@ -4,11 +4,14 @@
 
 select *
 from {{ ref('stg_io__companies')}}
-where 1=1
+WHERE 1=1
     and db_name like '%_company'
     and is_blank = 0
     and comp_project = 'Indica'
-    and not comp_email like '%maildrop%'
+    and not domain_prefix like '%prod'
+    and not domain_prefix like 'test%'
+    and not domain_prefix like '%demo%'
+    and (not comp_email like '%maildrop.cc' or comp_email = 'calif@maildrop.cc')
     and not comp_email like '%indica%'
     and not comp_name like 'Blank company%'
     and not comp_name like '%test%'
@@ -19,3 +22,4 @@ where 1=1
         8585, 3324, 8582, 6022, 3439, 8583, 8586, 6443, 8588, 
         6483, 7900, 8587, 8589, 9471, 7304, 7523, 8911, 213
     )
+    and comp_is_approved = 1
