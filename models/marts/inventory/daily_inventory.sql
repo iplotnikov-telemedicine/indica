@@ -213,7 +213,7 @@ final as (
         end_of_day_calc.comp_id,
         end_of_day_calc.domain_prefix,
         coalesce(end_of_day_calc.office_id, 0) as office_id,
-        CASE office_id WHEN 0 THEN 'No office' ELSE offices.office_name END as office_name,
+        CASE coalesce(end_of_day_calc.office_id, 0) WHEN 0 THEN 'No office' ELSE offices.office_name END as office_name,
         end_of_day_calc.product_id,
         pwd.prod_name,
         pwd.brand_id,
