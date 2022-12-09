@@ -14,9 +14,8 @@ with orders as (
 
     select * 
     from {{ ref('stg_io__warehouse_orders') }}
-    where comp_id in (9928, 3628, 9868)
     {% if is_incremental() %}
-        and sync_updated_at > (select max(sync_updated_at) from {{ this }})
+        where sync_updated_at > (select max(sync_updated_at) from {{ this }})
     {% endif %}
 
 ),
