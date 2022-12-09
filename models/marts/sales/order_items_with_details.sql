@@ -13,7 +13,7 @@
 with order_items as (
     select * 
     from {{ ref('stg_io__warehouse_order_items') }}
-    where comp_id in (9928, 3628, 9868)
+    where count > 0
     {% if is_incremental() %}
         and sync_updated_at > (select max(sync_updated_at) from {{ this }})
     {% endif %}
@@ -88,8 +88,6 @@ final as (
         on order_items.discount_id = item_discounts.id
         and order_items.comp_id = item_discounts.comp_id
         and item_discounts.apply_type = 'item'
-
-    where order_items.count > 0
 
 )
 
