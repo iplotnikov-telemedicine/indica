@@ -19,9 +19,9 @@ with product_transactions as (
 
 ),
 
-companies as (
+customers as (
 
-    select * from {{ ref('stg_io__companies') }}
+    select * from {{ ref('int_customers') }}
 
 ),
 
@@ -42,7 +42,7 @@ transactions_grouped AS (
     SELECT 
         trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date,
         product_transactions.comp_id,
-        companies.domain_prefix,
+        customers.domain_prefix,
         product_transactions.office_id,
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
@@ -75,11 +75,11 @@ transactions_grouped AS (
 
     FROM product_transactions
 
-    INNER JOIN companies
-        ON product_transactions.comp_id = companies.comp_id
+    INNER JOIN customers
+        ON product_transactions.comp_id = customers.comp_id
     
     INNER JOIN timezone
-        ON companies.timezone_id = timezone.id
+        ON customers.timezone_id = timezone.id
     
     LEFT JOIN units_of_weight
         ON product_transactions.item_type = units_of_weight.unit
@@ -93,7 +93,7 @@ missed_transfers AS (
     SELECT 
         trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date,
         product_transactions.comp_id,
-        companies.domain_prefix,
+        customers.domain_prefix,
         office_to_id AS office_id, 
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
@@ -110,11 +110,11 @@ missed_transfers AS (
 
     FROM product_transactions
 
-    INNER JOIN companies
-        ON product_transactions.comp_id = companies.comp_id
+    INNER JOIN customers
+        ON product_transactions.comp_id = customers.comp_id
     
     INNER JOIN timezone
-        ON companies.timezone_id = timezone.id
+        ON customers.timezone_id = timezone.id
 
     LEFT JOIN units_of_weight
         ON product_transactions.item_type = units_of_weight.unit
@@ -143,7 +143,7 @@ daily_total AS (
         report_date, 
         comp_id,
         domain_prefix,
-        office_id, 
+        coalesce(office_id, -1) as office_id, 
         product_id,
 
         SUM(check_in) AS check_in,
@@ -212,8 +212,8 @@ final as (
         end_of_day_calc.report_date, 
         end_of_day_calc.comp_id,
         end_of_day_calc.domain_prefix,
-        coalesce(end_of_day_calc.office_id, 0) as office_id,
-        CASE coalesce(end_of_day_calc.office_id, 0) WHEN 0 THEN 'No office' ELSE offices.office_name END as office_name,
+        end_of_day_calc.office_id,
+        CASE end_of_day_calc.office_id WHEN -1 THEN 'No office' ELSE offices.office_name END as office_name,
         end_of_day_calc.product_id,
         pwd.prod_name,
         pwd.brand_id,
