@@ -14,7 +14,7 @@ with product_transactions as (
 
     select * from {{ ref('stg_io__product_transactions') }}
     {% if is_incremental() %}
-        where date >= (select max(report_date) - interval '1 DAY' from {{ this }})
+        where date >= (select max(report_date) - interval '2 DAY' from {{ this }})
     {% endif %}
 
 ),
@@ -189,9 +189,7 @@ end_of_day_calc as (
         return, 
         transfer_in_another_product,
         transfer_out_another_product,
-        inventory_turnover,
-        SUM(inventory_turnover) OVER (PARTITION BY comp_id, office_id, product_id 
-            ORDER BY report_date ROWS UNBOUNDED PRECEDING) AS end_of_day_inventory
+        inventory_turnover
             
     FROM daily_total
 
@@ -238,7 +236,7 @@ final as (
     left join offices
         on end_of_day_calc.office_id = offices.office_id
 
-    inner join int_products_with_details pwd
+    left join int_products_with_details pwd
         on end_of_day_calc.product_id = pwd.prod_id
         and end_of_day_calc.comp_id = pwd.comp_id
 
