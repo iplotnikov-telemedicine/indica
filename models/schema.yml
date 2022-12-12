@@ -481,6 +481,11 @@ models:
           combination_of_columns:
             - comp_id
             - id
+    columns:
+    - name: amount
+      description: sales after taxes and before discounts
+    - name: total_amount
+      description: sales after taxes and after discounts
 
   - name: daily_inventory
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
