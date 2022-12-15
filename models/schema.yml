@@ -487,7 +487,7 @@ models:
     - name: total_amount
       description: sales after taxes and after discounts
 
-  - name: daily_inventory
+  - name: inventory_daily
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
     columns:
     - name: domain_prefix
