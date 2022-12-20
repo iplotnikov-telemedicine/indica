@@ -1,5 +1,11 @@
 
-{{ config(materialized='ephemeral') }}
+{{
+    config(
+        materialized='table',
+        sort=['comp_id', 'patient_id'],
+        dist='patient_id'
+    )
+}}
 
 
 with warehouse_orders as (
