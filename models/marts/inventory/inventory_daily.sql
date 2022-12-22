@@ -9,30 +9,11 @@
 }}
 
 
-with product_transactions_raw as (
+with timezone as (
 
-    SELECT 
-        *, 
-        trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date
-
-    FROM {{ ref('stg_io__product_transactions') }}
-
-    INNER JOIN timezone
-        ON customers.timezone_id = timezone.id
+    select * from {{ ref('stg_io__timezone') }}
 
 ),
-
-product_transactions as (
-
-    SELECT *
-
-    FROM product_transactions_raw
-
-    {% if is_incremental() %}
-        WHERE report_date > (SELECT max(report_date) FROM {{ this }})
-    {% endif %}
-
-)
 
 customers as (
 
@@ -40,9 +21,46 @@ customers as (
 
 ),
 
-timezone as (
+product_transactions_raw as (
 
-    select * from {{ ref('stg_io__timezone') }}
+    select * from {{ ref('stg_io__product_transactions') }}
+
+    {% if is_incremental() %}
+        WHERE date > (SELECT max(report_date) - INTERVAL '1 DAY' FROM {{ this }})
+    {% endif %}
+
+),
+
+product_transactions_tz as (
+
+    SELECT 
+        product_transactions_raw.*, 
+        customers.domain_prefix,
+        trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date
+
+    FROM product_transactions_raw
+
+    INNER JOIN customers
+        ON product_transactions_raw.comp_id = customers.comp_id
+
+    INNER JOIN timezone
+        ON customers.timezone_id = timezone.id
+
+    {% if is_incremental() %}
+        WHERE date > (SELECT max(report_date) FROM {{ this }})
+    {% endif %}
+
+),
+
+product_transactions as (
+
+    SELECT *
+
+    FROM product_transactions_tz
+
+    {% if is_incremental() %}
+        WHERE report_date > (SELECT max(report_date) FROM {{ this }})
+    {% endif %}
 
 ),
 
@@ -55,9 +73,9 @@ units_of_weight as (
 transactions_grouped AS (
 
     SELECT 
-        report_date,
+        product_transactions.report_date,
         product_transactions.comp_id,
-        customers.domain_prefix,
+        product_transactions.domain_prefix,
         product_transactions.office_id,
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
@@ -89,9 +107,6 @@ transactions_grouped AS (
             ) * item_type_weight, 0) AS return
 
     FROM product_transactions
-
-    INNER JOIN customers
-        ON product_transactions.comp_id = customers.comp_id
     
     LEFT JOIN units_of_weight
         ON product_transactions.item_type = units_of_weight.unit
@@ -103,9 +118,9 @@ transactions_grouped AS (
 missed_transfers AS (
 
     SELECT 
-        trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date,
+        product_transactions.report_date,
         product_transactions.comp_id,
-        customers.domain_prefix,
+        product_transactions.domain_prefix,
         office_to_id AS office_id, 
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
@@ -121,12 +136,6 @@ missed_transfers AS (
         0 AS return
 
     FROM product_transactions
-
-    INNER JOIN customers
-        ON product_transactions.comp_id = customers.comp_id
-    
-    INNER JOIN timezone
-        ON customers.timezone_id = timezone.id
 
     LEFT JOIN units_of_weight
         ON product_transactions.item_type = units_of_weight.unit
