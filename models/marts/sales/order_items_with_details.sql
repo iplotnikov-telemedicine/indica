@@ -5,7 +5,7 @@
         incremental_strategy='delete+insert',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
-        dist='sync_updated_at'
+        dist='updated_at'
     )
 }}
 
@@ -15,7 +15,7 @@ with order_items as (
     from {{ ref('stg_io__warehouse_order_items') }}
     where count > 0
     {% if is_incremental() %}
-        and sync_updated_at > (select max(sync_updated_at) from {{ this }})
+        and updated_at > (select max(updated_at) from {{ this }})
     {% endif %}
 ),
 
