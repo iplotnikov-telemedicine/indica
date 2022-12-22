@@ -2,7 +2,6 @@
 {{
     config(
         materialized='incremental',
-        incremental_strategy='delete+insert',
         unique_key=['report_date', 'office_id', 'product_id'],
         sort=['comp_id', 'report_date'],
         dist='report_date'
@@ -10,14 +9,30 @@
 }}
 
 
-with product_transactions as (
+with product_transactions_raw as (
 
-    select * from {{ ref('stg_io__product_transactions') }}
-    {% if is_incremental() %}
-        where date >= (select max(report_date) - interval '2 DAY' from {{ this }})
-    {% endif %}
+    SELECT 
+        *, 
+        trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date
+
+    FROM {{ ref('stg_io__product_transactions') }}
+
+    INNER JOIN timezone
+        ON customers.timezone_id = timezone.id
 
 ),
+
+product_transactions as (
+
+    SELECT *
+
+    FROM product_transactions_raw
+
+    {% if is_incremental() %}
+        WHERE report_date > (SELECT max(report_date) FROM {{ this }})
+    {% endif %}
+
+)
 
 customers as (
 
@@ -40,7 +55,7 @@ units_of_weight as (
 transactions_grouped AS (
 
     SELECT 
-        trunc(CONVERT_TIMEZONE('UTC', timezone.zone_name, date)) as report_date,
+        report_date,
         product_transactions.comp_id,
         customers.domain_prefix,
         product_transactions.office_id,
@@ -77,9 +92,6 @@ transactions_grouped AS (
 
     INNER JOIN customers
         ON product_transactions.comp_id = customers.comp_id
-    
-    INNER JOIN timezone
-        ON customers.timezone_id = timezone.id
     
     LEFT JOIN units_of_weight
         ON product_transactions.item_type = units_of_weight.unit
