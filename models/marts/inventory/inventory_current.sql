@@ -39,6 +39,7 @@ final as (
         grouped.product_id,
         p.prod_name,
         p.unit,
+        p.prod_cost,
         p.brand_id,
         p.brand_name,
         p.vendor_name,
