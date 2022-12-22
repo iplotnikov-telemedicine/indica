@@ -1,7 +1,7 @@
 
 {{
     config(
-        materialized='incremental',
+        materialized='table',
         incremental_strategy='delete+insert',
         unique_key=['comp_id', 'prod_id'],
         sort=['comp_id', 'prod_id'],
@@ -14,11 +14,6 @@ with products as (
 
     SELECT * 
     FROM {{ ref('stg_io__products') }}
-
-    -- {% if is_incremental() %}
-    --     where sync_updated_at > (select max(sync_updated_at) from {{ this }})
-    -- {% endif %}
-
 ),
 
 product_categories as (
