@@ -5,7 +5,7 @@
         incremental_strategy='delete+insert',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
-        dist='sync_updated_at'
+        dist='updated_at'
     )
 }}
 

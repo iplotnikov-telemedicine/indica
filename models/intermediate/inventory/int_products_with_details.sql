@@ -2,10 +2,9 @@
 {{
     config(
         materialized='table',
-        incremental_strategy='delete+insert',
         unique_key=['comp_id', 'prod_id'],
         sort=['comp_id', 'prod_id'],
-        dist='sync_updated_at'
+        dist='prod_id'
     )
 }}
 
@@ -14,6 +13,11 @@ with products as (
 
     SELECT * 
     FROM {{ ref('stg_io__products') }}
+
+    -- {% if is_incremental() %}
+    --     where updated_at > (select max(updated_at) from {{ this }})
+    -- {% endif %}
+
 ),
 
 product_categories as (
@@ -71,14 +75,7 @@ final as (
             WHEN 2 THEN NULL
             WHEN 3 THEN product_categories.name
             ELSE NULL
-        END as sub_category_2,
-
-        GREATEST(products.sync_updated_at, 
-            brands.sync_updated_at,
-            product_categories.sync_updated_at,
-            product_categories_1.sync_updated_at,
-            product_categories_2.sync_updated_at
-        ) as sync_updated_at
+        END as sub_category_2
 
     FROM products
 
