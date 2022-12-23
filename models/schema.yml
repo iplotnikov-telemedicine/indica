@@ -498,8 +498,24 @@ models:
       description: The date is based on transactions that took place within it
     - name: office_id
       description: ID of the store where transactions happened
+    - name: office_name
+      description: Name of the store where transactions happened
     - name: product_id
       description: ID of the product which was involved in transactions
+    - name: prod_name
+      description: Name of the product which was involved in transactions
+    - name: brand_id
+      description: ID of the product's brand
+    - name: brand_name
+      description: Name of the product's brand
+    - name: direct_category
+      description: Name of the product's direct_category
+    - name: parent_category
+      description: Name of the product's parent_category
+    - name: sub_category_1
+      description: Name of the product's sub_category_1
+    - name: sub_category_2
+      description: Name of the product's sub_category_2
     - name: check_in
       description: Number of grams of the product that was checked in in this store
     - name: transfer_in
