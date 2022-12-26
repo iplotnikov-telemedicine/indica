@@ -48,6 +48,7 @@ final as (
         products.prod_price as prod_cost,
         products.prod_sku,
         products.prod_price_type as unit,
+        products.net_weight,
         products.brand_id,
         
         brands.brand_name,

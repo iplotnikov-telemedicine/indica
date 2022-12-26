@@ -64,6 +64,7 @@ final as (
         orders.patient_zip_name,
         orders.patient_groups,
 
+        pwd.net_weight,
         pwd.prod_cost,
         pwd.prod_sku,
         pwd.brand_name,
