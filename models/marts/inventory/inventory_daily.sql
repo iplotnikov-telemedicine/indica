@@ -26,7 +26,7 @@ product_transactions_raw as (
     select * from {{ ref('stg_io__product_transactions') }}
 
     {% if is_incremental() %}
-        WHERE date > (SELECT max(report_date) - INTERVAL '1 DAY' FROM {{ this }})
+        WHERE date > (SELECT max(report_date) - INTERVAL '2 DAY' FROM {{ this }})
     {% endif %}
 
 ),
@@ -46,10 +46,6 @@ product_transactions_tz as (
     INNER JOIN timezone
         ON customers.timezone_id = timezone.id
 
-    {% if is_incremental() %}
-        WHERE date > (SELECT max(report_date) FROM {{ this }})
-    {% endif %}
-
 ),
 
 product_transactions as (
@@ -59,7 +55,7 @@ product_transactions as (
     FROM product_transactions_tz
 
     {% if is_incremental() %}
-        WHERE report_date > (SELECT max(report_date) FROM {{ this }})
+        WHERE report_date > (SELECT max(report_date) FROM {{ this }}) AND report_date < current_date
     {% endif %}
 
 ),

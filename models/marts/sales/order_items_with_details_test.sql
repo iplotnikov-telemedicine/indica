@@ -1,11 +1,13 @@
 
 {{
     config(
-        materialized='incremental',
-        incremental_strategy='delete+insert',
+        materialized='insert_by_period',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
-        dist='updated_at'
+        dist='updated_at',
+        period='year',
+        timestamp_field='updated_at',
+        start_date='2014-01-01'
     )
 }}
 
@@ -13,15 +15,14 @@
 with order_items as (
     select * 
     from {{ ref('stg_io__warehouse_order_items') }}
-    where count > 0
-    {% if is_incremental() %}
-        and updated_at > (select max(updated_at) from {{ this }})
-    {% endif %}
+    where count > 0 and __PERIOD_FILTER__ and comp_id = 4546
 ),
 
 orders as (
 
-    select * from {{ ref('orders_with_details') }} where confirmed_at is not null
+    select * 
+    from {{ ref('orders_with_details') }} 
+    where confirmed_at is not null
 
 ),
 
