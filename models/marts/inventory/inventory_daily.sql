@@ -160,7 +160,8 @@ daily_total AS (
         report_date, 
         comp_id,
         domain_prefix,
-        coalesce(office_id, -1) as office_id, 
+        CASE WHEN office_id = 0 OR office_id IS NULL
+            THEN -comp_id ELSE office_id END as office_id,
         product_id,
 
         SUM(check_in) AS check_in,
