@@ -424,6 +424,9 @@ sources:
       - name: register_log
         description: consolidated register log
 
+      - name: service_history
+        description: consolidated service history
+
       - name: discounts
         description: consolidated discounts
 
