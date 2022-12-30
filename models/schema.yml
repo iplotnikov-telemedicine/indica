@@ -415,6 +415,9 @@ sources:
       - name: product_audit_item
         description: consolidated product audit items
 
+      - name: product_filter_index
+        description: consolidated mapping between products and discounts
+
       - name: company_config
         description: consolidated company_config
 
