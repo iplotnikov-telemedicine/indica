@@ -26,6 +26,7 @@ service_history as (
 
     select * 
     from {{ ref('stg_io__service_history') }}
+    WHERE 1 = 1
     {% if is_incremental() %}
         and created_at > (select max(open_at) from {{ this }})
     {% endif %}
@@ -36,6 +37,7 @@ orders as (
 
     select * 
     from {{ ref('stg_io__warehouse_orders') }}
+    WHERE 1 = 1
     {% if is_incremental() %}
         and created_at > (select max(open_at) from {{ this }})
     {% endif %}
