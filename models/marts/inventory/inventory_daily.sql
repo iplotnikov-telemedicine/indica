@@ -26,7 +26,7 @@ product_transactions_raw as (
     select * from {{ ref('stg_io__product_transactions') }}
 
     {% if is_incremental() %}
-        WHERE date > (SELECT max(report_date) - INTERVAL '2 DAY' FROM {{ this }})
+        WHERE date > (SELECT max(max_utc_ts) FROM {{ this }})
     {% endif %}
 
 ),
@@ -54,10 +54,6 @@ product_transactions as (
 
     FROM product_transactions_tz
 
-    {% if is_incremental() %}
-        WHERE report_date > (SELECT max(report_date) FROM {{ this }}) AND report_date < current_date
-    {% endif %}
-
 ),
 
 units_of_weight as (
@@ -75,7 +71,8 @@ transactions_grouped AS (
         product_transactions.office_id,
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
-
+        
+        MAX(product_transactions.date) as utc_ts,
         COALESCE(SUM(CASE WHEN type IN (1) THEN qty
             WHEN type IN (7, 8) THEN -qty 
             ELSE NULL END) * item_type_weight, 0) AS check_in,
@@ -121,6 +118,7 @@ missed_transfers AS (
         product_id,
         COALESCE(units_of_weight.grams, 1) AS item_type_weight,
 
+        MAX(product_transactions.date) as utc_ts,
         0 AS check_in,
         COALESCE(SUM(qty) * item_type_weight, 0) AS transfer_in,
         0 AS transfer_out,
@@ -154,7 +152,7 @@ union_all AS (
 
 ),
 
-daily_total AS (
+end_of_day_calc AS (
 
     SELECT 
         report_date, 
@@ -164,6 +162,7 @@ daily_total AS (
             THEN -comp_id ELSE office_id END as office_id,
         product_id,
 
+        MAX(utc_ts) AS max_utc_ts,
         SUM(check_in) AS check_in,
         SUM(transfer_in) AS transfer_in,
         SUM(transfer_out) AS transfer_out,
@@ -190,29 +189,6 @@ daily_total AS (
 
 ),
 
-end_of_day_calc as (
-
-    SELECT 
-        report_date, 
-        comp_id,
-        domain_prefix,
-        office_id,
-        product_id,
-        check_in,
-        transfer_in,
-        transfer_out,
-        adjusted_increase,
-        adjusted_decrease,
-        sell,
-        return, 
-        transfer_in_another_product,
-        transfer_out_another_product,
-        inventory_turnover
-            
-    FROM daily_total
-
-),
-
 offices as (
     select * from {{ ref('stg_io__offices') }}
 ),
@@ -226,10 +202,11 @@ final as (
     select
 
         end_of_day_calc.report_date, 
+        end_of_day_calc.max_utc_ts,
         end_of_day_calc.comp_id,
         end_of_day_calc.domain_prefix,
         end_of_day_calc.office_id,
-        CASE end_of_day_calc.office_id WHEN -1 THEN 'No office' ELSE offices.office_name END as office_name,
+        CASE WHEN end_of_day_calc.office_id < 0 THEN 'No office' ELSE offices.office_name END as office_name,
         end_of_day_calc.product_id,
         pwd.prod_name,
         pwd.brand_id,
@@ -251,12 +228,12 @@ final as (
 
     from end_of_day_calc
 
-    left join offices
-        on end_of_day_calc.office_id = offices.office_id
-
-    left join int_products_with_details pwd
+    inner join int_products_with_details pwd
         on end_of_day_calc.product_id = pwd.prod_id
         and end_of_day_calc.comp_id = pwd.comp_id
+
+    left join offices
+        on end_of_day_calc.office_id = offices.office_id
 
 )
 
