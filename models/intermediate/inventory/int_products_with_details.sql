@@ -38,6 +38,12 @@ vendors as (
 
 ),
 
+strain_types as (
+
+    select * from {{ ref('strain_types')}}
+
+),
+
 
 final as (
 
@@ -47,6 +53,8 @@ final as (
         products.prod_name,
         products.prod_price as prod_cost,
         products.prod_sku,
+        strain_types.strain_type as strain_type,
+        products.brand_product_strain_name as strain_name,
         products.prod_price_type as unit,
         products.net_weight,
         products.brand_id,
@@ -88,6 +96,9 @@ final as (
     LEFT JOIN vendors
         ON products.prod_vendor_id = vendors.id
         AND products.comp_id = vendors.comp_id
+
+    LEFT JOIN strain_types
+        ON products.strain = strain_types.strain_type_id
 
     LEFT JOIN product_categories 
         ON products.prod_category_id = product_categories.id
