@@ -54,7 +54,7 @@ final as (
         products.prod_price as prod_cost,
         products.prod_sku,
         strain_types.strain_type as strain_type,
-        products.brand_product_strain_name as strain_name,
+        CASE products.brand_product_strain_name WHEN '' THEN NULL ELSE products.brand_product_strain_name END as strain_name,
         products.prod_price_type as unit,
         products.net_weight,
         products.brand_id,

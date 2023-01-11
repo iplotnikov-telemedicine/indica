@@ -72,8 +72,9 @@ final as (
         pwd.direct_category as product_direct_category,
         pwd.parent_category as product_parent_category,
         pwd.sub_category_1 as product_sub_category_1,
-        pwd.sub_category_2 as product_sub_category_2
-        
+        pwd.sub_category_2 as product_sub_category_2,
+
+        orders.patient_id   
         
     from order_items
     
