@@ -26,9 +26,9 @@ products AS (
 
 ),
 
-companies AS (
+customers AS (
 
-    select * from {{ ref('stg_io__companies') }}
+    select * from {{ ref('int_customers') }}
 
 ),
 
@@ -55,7 +55,7 @@ monthly_stat AS (
             THEN woi.returned_amount - (woi.returned_amount * woi.tax / woi.paid_amount)
             ELSE 0 END) AS order_net_sales
     FROM warehouse_orders wo
-    INNER JOIN companies c 
+    INNER JOIN customers c 
         ON wo.comp_id = c.comp_id
     INNER JOIN timezone tz 
         ON c.timezone_id = tz.id
