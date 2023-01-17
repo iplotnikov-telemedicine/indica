@@ -1,21 +1,19 @@
-
 {{
     config(
         materialized='insert_by_period',
+        period='month',
+        timestamp_field='updated_at',
+        start_date='2014-01-01',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
-        dist='updated_at',
-        period='year',
-        timestamp_field='updated_at',
-        start_date='2014-01-01'
+        dist='updated_at'
     )
 }}
-
 
 with order_items as (
     select * 
     from {{ ref('stg_io__warehouse_order_items') }}
-    where count > 0 and __PERIOD_FILTER__ and comp_id = 4546
+    where count > 0 and __PERIOD_FILTER__
 ),
 
 orders as (
@@ -35,6 +33,12 @@ products_with_details as (
 discounts as (
 
     select * from {{ ref('stg_io__discounts') }}
+
+),
+
+product_checkins as (
+
+    select * from {{ ref('stg_io__product_checkins') }}
 
 ),
 
@@ -65,16 +69,18 @@ final as (
         orders.patient_zip_name,
         orders.patient_groups,
 
-        pwd.net_weight,
-        pwd.prod_cost,
-        pwd.prod_sku,
-        pwd.brand_name,
-        pwd.vendor_name,
-        pwd.direct_category as product_direct_category,
-        pwd.parent_category as product_parent_category,
-        pwd.sub_category_1 as product_sub_category_1,
-        pwd.sub_category_2 as product_sub_category_2
+        -- pwd.net_weight,
+        -- pwd.prod_cost,
+        -- pwd.prod_sku,
+        -- pwd.brand_name,
+        -- pwd.vendor_name,
+        -- pwd.direct_category as product_direct_category,
+        -- pwd.parent_category as product_parent_category,
+        -- pwd.sub_category_1 as product_sub_category_1,
+        -- pwd.sub_category_2 as product_sub_category_2
         
+        product_checkins.vendor_id,
+        product_checkins.vendor_name
         
     from order_items
     
@@ -82,14 +88,18 @@ final as (
         on order_items.comp_id = orders.comp_id
         and order_items.order_id = orders.id
 
-    left join products_with_details pwd
-        on order_items.product_id = pwd.prod_id
-        and order_items.comp_id = pwd.comp_id
+    -- left join products_with_details pwd
+    --     on order_items.product_id = pwd.prod_id
+    --     and order_items.comp_id = pwd.comp_id
 
     left join discounts as item_discounts
         on order_items.discount_id = item_discounts.id
         and order_items.comp_id = item_discounts.comp_id
         and item_discounts.apply_type = 'item'
+    
+    left join product_checkins
+        on order_items.comp_id = product_checkins.comp_id
+        and order_items.product_checkin_id = product_checkins.id
 
 )
 
