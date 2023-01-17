@@ -435,6 +435,9 @@ sources:
 
       - name: sf_guard_user
         description: consolidated users
+      
+      - name: product_checkins
+        description: consolidated checkins log
 
   - name: ext_indica_backend
     description: This is a backend external schema
