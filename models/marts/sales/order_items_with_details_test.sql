@@ -1,9 +1,10 @@
 {{
     config(
+        schema='marts',
         materialized='insert_by_period',
-        period='month',
+        period='week',
         timestamp_field='updated_at',
-        start_date='2014-01-01',
+        start_date='2019-01-01',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
         dist='updated_at'
@@ -68,16 +69,6 @@ final as (
         orders.patient_dmv,
         orders.patient_zip_name,
         orders.patient_groups,
-
-        -- pwd.net_weight,
-        -- pwd.prod_cost,
-        -- pwd.prod_sku,
-        -- pwd.brand_name,
-        -- pwd.vendor_name,
-        -- pwd.direct_category as product_direct_category,
-        -- pwd.parent_category as product_parent_category,
-        -- pwd.sub_category_1 as product_sub_category_1,
-        -- pwd.sub_category_2 as product_sub_category_2
         
         product_checkins.vendor_id,
         product_checkins.vendor_name
@@ -87,10 +78,6 @@ final as (
     inner join orders
         on order_items.comp_id = orders.comp_id
         and order_items.order_id = orders.id
-
-    -- left join products_with_details pwd
-    --     on order_items.product_id = pwd.prod_id
-    --     and order_items.comp_id = pwd.comp_id
 
     left join discounts as item_discounts
         on order_items.discount_id = item_discounts.id
