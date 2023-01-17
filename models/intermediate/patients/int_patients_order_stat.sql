@@ -31,7 +31,8 @@ orders as (
 		lag(placed_at) over (partition by comp_id, patient_id order by placed_at) as lag_placed_at,
 		datediff(day, cast(lag_placed_at as date), cast(placed_at as date)) + 1 as days_between_orders,
 		total_amount,
-		office_id
+		office_id,
+        sum_discount
 	from warehouse_orders wo
 	where confirmed_at is not null
 
@@ -43,6 +44,8 @@ final as (
         orders.comp_id,
         orders.patient_id,
         int_patients_top_brands.top_purchased_brands,
+        count(CASE WHEN sum_discount > 0 THEN 1 END) as discounted_orders_count,
+        count(order_id) as orders_count,
         sum(total_amount) as total_purchase_amount,
         sum(case when marketplace in (1, 4) then total_amount end) as offline_purchase_amount,
         total_purchase_amount - offline_purchase_amount as online_purchase_amount,
