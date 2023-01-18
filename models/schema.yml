@@ -432,9 +432,6 @@ sources:
 
       - name: discounts
         description: consolidated discounts
-
-      - name: sf_guard_user
-        description: consolidated users
       
       - name: product_checkins
         description: consolidated checkins log
