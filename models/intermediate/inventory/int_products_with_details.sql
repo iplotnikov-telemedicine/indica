@@ -58,6 +58,7 @@ final as (
         products.prod_price_type as unit,
         products.net_weight,
         products.brand_id,
+        products.deleted_at,
         
         brands.brand_name,
 
