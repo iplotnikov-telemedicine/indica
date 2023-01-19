@@ -21,7 +21,6 @@ orders as (
 
     select * 
     from {{ ref('orders_with_details') }} 
-    where confirmed_at is not null
 
 ),
 
