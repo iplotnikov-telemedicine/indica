@@ -2,7 +2,7 @@
     config(
         schema='marts',
         materialized='insert_by_period',
-        period='week',
+        period='month',
         timestamp_field='updated_at',
         start_date='2019-01-01',
         unique_key=['comp_id', 'id'],
@@ -21,6 +21,7 @@ orders as (
 
     select * 
     from {{ ref('orders_with_details') }} 
+    where confirmed_at is not null
 
 ),
 

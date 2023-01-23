@@ -37,6 +37,12 @@ discounts as (
 
 ),
 
+product_checkins as (
+
+    select * from {{ ref('stg_io__product_checkins') }}
+
+),
+
 final as (
 
     select
@@ -63,18 +69,19 @@ final as (
         orders.patient_dmv,
         orders.patient_zip_name,
         orders.patient_groups,
+        orders.patient_id,
 
         pwd.net_weight,
         pwd.prod_cost,
         pwd.prod_sku,
         pwd.brand_name,
-        pwd.vendor_name,
         pwd.direct_category as product_direct_category,
         pwd.parent_category as product_parent_category,
         pwd.sub_category_1 as product_sub_category_1,
         pwd.sub_category_2 as product_sub_category_2,
 
-        orders.patient_id   
+        product_checkins.vendor_id,
+        product_checkins.vendor_name
         
     from order_items
     
@@ -91,6 +98,9 @@ final as (
         and order_items.comp_id = item_discounts.comp_id
         and item_discounts.apply_type = 'item'
 
+    left join product_checkins
+        on order_items.comp_id = product_checkins.comp_id
+        and order_items.product_checkin_id = product_checkins.id    
 )
 
 select * from final
