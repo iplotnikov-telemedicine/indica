@@ -28,6 +28,7 @@ vars:
   limit_types: ['staff_count', 'free_email_limit', 'courier_limit', 'register_limit', 'tv_device_limit', 'plan', 
                 'recurly_unpaid_invoice_id', 'recurly_unpaid_invoice_number', 'recurly_subscription_id',
                 'recurly_trial_expired_at', 'recurly_expired_at','recurly_dunning_at']
+  store_types: ['shelf_stock', 'backstock', 'transit']
 
 
 # Configuring models
