@@ -42,6 +42,23 @@ unioned as (
     {% if not loop.last -%} union all {%- endif %}
     {% endfor %}
 
+),
+
+offices as (
+
+    select * from {{ ref('stg_io__offices')}} 
+
+),
+
+final as (
+
+    select
+        unioned.*,
+        offices.office_name
+    from unioned
+    inner join offices
+        on unioned.office_id = offices.office_id
+
 )
 
-select * from unioned
+select * from final
