@@ -89,11 +89,16 @@ customers as (
 
 ),
 
-final as (
+registers as (
+
+    select * from {{ ref('stg_io__registers') }}
+
+),
+
+grouped as (
 
     SELECT 
         shifts.comp_id,
-        customers.domain_prefix,
         shifts.register_id,
         shifts.register_name,
         shifts.open_at,
@@ -107,16 +112,40 @@ final as (
 
     FROM shifts
 
-    INNER JOIN customers
-        on shifts.comp_id = customers.comp_id
-
     INNER JOIN register_sales
         ON shifts.comp_id = register_sales.comp_id
         AND shifts.register_id = register_sales.register_id
         AND register_sales.created_at >= shifts.open_at
         AND register_sales.created_at <= shifts.closed_at
 
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+    GROUP BY 1, 2, 3, 4, 5, 6, 7
+
+),
+
+final as (
+
+    SELECT 
+        grouped.comp_id,
+        customers.domain_prefix,
+        grouped.register_id,
+        grouped.register_name,
+        grouped.open_at,
+        grouped.closed_at,
+        grouped.order_type,
+        grouped.order_status,
+        grouped.orders_count,
+        grouped.sales_amount,
+        grouped.wait_minutes,
+        registers.office_id
+
+    FROM grouped
+
+    INNER JOIN registers
+        ON grouped.comp_id = registers.comp_id
+        AND grouped.register_id = registers.id
+
+    INNER JOIN customers
+        ON grouped.comp_id = customers.comp_id
 
 )
 
