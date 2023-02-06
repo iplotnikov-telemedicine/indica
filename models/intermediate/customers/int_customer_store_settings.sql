@@ -10,7 +10,7 @@ with settings as (
 
 numbers as (
 
-    select generated_number from {{ ref('numbers') }}
+    select generated_number from {{ ref('util_numbers') }}
 
 ),
 
