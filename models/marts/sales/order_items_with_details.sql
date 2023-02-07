@@ -1,10 +1,8 @@
 
 {{
     config(
-        materialized='insert_by_period',
-        period='month',
-        start_date='2015-01-01',
-        timestamp_field='updated_at',
+        materialized='incremental',
+        incremental_strategy='delete+insert',
         unique_key=['comp_id', 'id'],
         sort=['comp_id', 'id'],
         dist='updated_at'
@@ -16,7 +14,10 @@ with order_items as (
 
     select * 
     from {{ ref('stg_io__warehouse_order_items') }}
-    where count > 0 and __PERIOD_FILTER__
+    where count > 0
+    {% if is_incremental() %}
+        and updated_at > (select max(updated_at) from {{ this }})
+    {% endif %}
 
 ),
 
