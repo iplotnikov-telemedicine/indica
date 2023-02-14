@@ -436,6 +436,9 @@ sources:
       - name: product_checkins
         description: consolidated checkins log
 
+      - name: product_office_qty
+        description: consolidated current inventory
+
   - name: ext_indica_backend
     description: This is a backend external schema
     tables:
