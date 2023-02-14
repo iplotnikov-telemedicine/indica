@@ -4,7 +4,7 @@
         config(
           strategy='timestamp',
           target_schema='test',
-          unique_key='comp_id || poq_id',
+          unique_key='comp_id || 0000 || poq_id',
           updated_at='sync_updated_at',
           invalidate_hard_deletes=True,
         )
