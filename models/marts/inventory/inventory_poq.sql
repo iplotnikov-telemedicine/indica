@@ -1,0 +1,51 @@
+{{
+    config(
+        materialized='view'
+    )
+}}
+
+with customers as (
+    select * from {{ ref('int_customers') }}
+),
+
+timezone as (
+    select * from {{ ref('stg_io__timezone') }}
+),
+
+snapshots as (
+    select * from {{ ref('product_office_qty_snapshot') }}
+    where poq_qty > 0
+),
+
+dates as (
+    select date_day + interval '23 hour 59 minute 59 second' as day_end
+    from {{ ref('util_dates') }}
+    where date_day >= '2023-02-13'::datetime 
+        and date_day <= current_date::datetime
+),
+
+convert_tz as (
+    select s.*, 
+        CONVERT_TIMEZONE('UTC', t.zone_name, dbt_valid_from) as dbt_valid_from_tz,
+        CONVERT_TIMEZONE('UTC', t.zone_name, dbt_valid_to) as dbt_valid_to_tz
+    from snapshots s
+    inner join customers c on s.comp_id = c.comp_id
+    inner join timezone t on c.timezone_id = t.id
+),
+
+join_date as (
+    select 
+        comp_id,
+        day_end::date as date,
+        poq_prod_id as product_id,
+        poq_office_id as office_id,
+        sum(poq_qty) as inventory_poq
+    from convert_tz
+    left join dates 
+        on dbt_valid_from_tz < day_end
+        and coalesce(dbt_valid_to_tz, current_date::datetime) >= day_end 
+    where day_end is not null
+    group by 1, 2, 3, 4
+)
+
+select * from join_date
