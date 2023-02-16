@@ -27,6 +27,7 @@ product_transactions_raw as (
 
     {% if is_incremental() %}
         WHERE date > (SELECT max(max_utc_ts) FROM {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),

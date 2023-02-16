@@ -17,6 +17,7 @@ with tax_payment_unioned as (
         
         {% if is_incremental() %}
             and updated_at > (select max(updated_at) from {{ this }})
+            or comp_id not in (select distinct comp_id from {{ this }})
         {% endif %}
 
         GROUP BY 1, 2, 3
