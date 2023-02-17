@@ -18,7 +18,7 @@ snapshots as (
 ),
 
 dates as (
-    select date_day + interval '23 hour 59 minute 59 second' as day_end
+    select date_day, date_day + interval '1 day' as day_end
     from {{ ref('util_dates') }}
     where date_day >= '2023-02-13'::datetime 
         and date_day <= current_date::datetime
@@ -36,14 +36,14 @@ convert_tz as (
 join_date as (
     select 
         comp_id,
-        day_end::date as date,
+        date_day::date as date,
         poq_prod_id as product_id,
         poq_office_id as office_id,
         sum(poq_qty) as inventory_poq
     from convert_tz
     left join dates 
-        on dbt_valid_from_tz < day_end
-        and coalesce(dbt_valid_to_tz, current_date::datetime) >= day_end 
+        on dbt_valid_from_tz <= day_end
+        and coalesce(dbt_valid_to_tz, current_date::datetime + interval '1 day') > day_end 
     where day_end is not null
     group by 1, 2, 3, 4
 )
