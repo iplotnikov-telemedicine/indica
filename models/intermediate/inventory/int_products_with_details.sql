@@ -59,6 +59,7 @@ final as (
         products.net_weight,
         products.brand_id,
         products.deleted_at,
+        products.custom_cost,
         
         brands.brand_name,
 
