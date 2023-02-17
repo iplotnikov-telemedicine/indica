@@ -304,6 +304,8 @@ sources:
       - name: warehouse_order_logs
         description: order log describing all the steps the order takes on its path to patient
         columns:
+        - name: comp_id
+          description: unique ID for the company
         - name: id
           description: unique ID for the log record
         - name: order_id
@@ -357,28 +359,12 @@ sources:
             44 for METRC_SENDER_CHANGED         
         - name: sf_guard_user_id
           description: reference to involved employee ID
-        - name: sf_guard_user_name
-          description: involved employee name
         - name: order_courier_register_id
-          description: IRRELEVANT
-        - name: order_courier_register_name
-          description: IRRELEVANT
-        - name: order_courier_register_id_old
-          description: IRRELEVANT
-        - name: order_courier_register_name_old
-          description: IRRELEVANT
-        - name: patient_id
-          description: reference to patient ID if employee involved
-        - name: patient_name
-          description: DEPRECATED
+          description: reference to involved courier register ID
         - name: created_at
           description: date and time when the record appeared in the table initially
-        - name: additional_data
-          description: comments
         - name: register_id
-          description: reference to involved register ID 
-        - name: register_name
-          description: the name of the register involved
+          description: reference to involved register ID
         - name: application
           description: can be POS or INDICA_ONLINE
 

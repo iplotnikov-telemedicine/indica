@@ -18,6 +18,7 @@ with register_log as (
     WHERE 1 = 1
     {% if is_incremental() %}
         and created_at > (select max(open_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),
@@ -29,6 +30,7 @@ service_history as (
     WHERE 1 = 1
     {% if is_incremental() %}
         and created_at > (select max(open_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),
@@ -40,6 +42,7 @@ orders as (
     WHERE 1 = 1
     {% if is_incremental() %}
         and created_at > (select max(open_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),
@@ -79,6 +82,7 @@ shifts as (
     WHERE 1 = 1
     {% if is_incremental() %}
         and open_at > (select max(open_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),

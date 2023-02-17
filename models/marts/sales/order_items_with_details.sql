@@ -17,6 +17,7 @@ with order_items as (
     where count > 0
     {% if is_incremental() %}
         and updated_at > (select max(updated_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),

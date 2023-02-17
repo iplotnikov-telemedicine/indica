@@ -14,6 +14,7 @@ with limits as (
     from {{ ref('stg_io__company_limits_audit_log') }}
     {% if is_incremental() %}
         where created_at > (select max(created_at) from {{ this }})
+        or company_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),
