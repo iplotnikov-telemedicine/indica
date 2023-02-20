@@ -1,0 +1,9 @@
+delivery_status,delivery_status_name
+STATUS_NONE,none
+STATUS_PENDING,pending
+STATUS_DRIVER_ON_ROUTE,driver_on_route
+STATUS_DRIVER_IS_ASSIGNED,driver_is_assigned
+STATUS_NOT_HOME,not_home
+STATUS_DELIVERY_CANCELED,delivery_canceled
+STATUS_DELIVERED,delivered
+STATUS_SHIPPED,shipped

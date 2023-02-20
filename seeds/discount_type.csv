@@ -1,0 +1,3 @@
+discout_id,discount_type_name
+2,TYPE_FIXED_DISCOUNT
+3,TYPE_PERCENT_DISCOUNT

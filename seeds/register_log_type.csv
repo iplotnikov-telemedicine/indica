@@ -1,0 +1,6 @@
+register_log_type_id,register_log_type_name
+1,Open Shift
+2,Safe Drop
+3,Sale
+4,Close Shift
+5,Return
