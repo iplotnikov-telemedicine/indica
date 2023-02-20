@@ -1,0 +1,5 @@
+discout_id,discount_type_name
+0,NO_CUSTOM_DISCOUNT
+1,TYPE_FIXED_PRICE #deprecated
+2,TYPE_FIXED_DISCOUNT
+3,TYPE_PERCENT_DISCOUNT
