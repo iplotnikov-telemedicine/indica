@@ -69,8 +69,6 @@ order_items_with_orders as (
         and order_items.comp_id = item_discounts.comp_id
         and item_discounts.apply_type = 'item'
 
-    where confirmed_at is not null
-
 ),
 
 products_with_details as (
