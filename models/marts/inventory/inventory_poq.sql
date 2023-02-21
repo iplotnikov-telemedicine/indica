@@ -42,7 +42,7 @@ join_date as (
         sum(poq_qty) as inventory_poq
     from convert_tz
     left join dates 
-        on dbt_valid_from_tz <= day_end
+        on dbt_valid_from_tz < day_end
         and coalesce(dbt_valid_to_tz, current_date::datetime + interval '1 day') > day_end 
     where day_end is not null
     group by 1, 2, 3, 4
