@@ -35,9 +35,6 @@ order_items_with_orders as (
         orders.office_id,
         orders.office_name,
 
-        domain_prefix, 
-        office_id, 
-        office_name, 
         comp_id, 
         id, 
         order_id, 
