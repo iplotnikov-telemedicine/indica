@@ -107,7 +107,9 @@ order_items_with_orders as (
         orders.patient_zip_name,
         orders.patient_groups,
         orders.patient_id,
-        orders.shipping_amount as delivery_fee
+        orders.shipping_amount as delivery_fee,
+
+        order_items.inserted_at
 
     from {{ ref('orders_with_details') }} orders
 
