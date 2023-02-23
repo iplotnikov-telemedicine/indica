@@ -182,7 +182,7 @@ final as (
         orders.refund_type, 
         orders.returned_at, 
         orders.shipping_method_name, 
-        orders.ax_tier_version_id, 
+        orders.tax_tier_version_id, 
         orders.vehicle, 
         orders.metrc_delivery_status, 
         orders.resend_staff_id, 
