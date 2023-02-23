@@ -16,8 +16,7 @@ with order_items as (
     from {{ ref('stg_io__warehouse_order_items') }}
     where count > 0
     {% if is_incremental() %}
-        and updated_at > (select max(updated_at) from {{ this }})
-        or comp_id not in (select distinct comp_id from {{ this }})
+        and inserted_at > (select max(inserted_at) from {{ this }})
     {% endif %}
 
 ),
@@ -107,7 +106,9 @@ order_items_with_orders as (
         orders.patient_zip_name,
         orders.patient_groups,
         orders.patient_id,
-        orders.shipping_amount as delivery_fee
+        orders.shipping_amount as delivery_fee,
+
+        order_items.inserted_at
 
     from {{ ref('orders_with_details') }} orders
 
