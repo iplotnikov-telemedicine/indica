@@ -16,7 +16,8 @@ with orders as (
     from {{ ref('stg_io__warehouse_orders') }}
     where 1=1
     {% if is_incremental() %}
-        and inserted_at > (select max(inserted_at) from {{ this }})
+        and updated_at > (select max(updated_at) from {{ this }})
+        or comp_id not in (select distinct comp_id from {{ this }})
     {% endif %}
 
 ),
