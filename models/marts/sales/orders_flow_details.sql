@@ -1,4 +1,3 @@
-
 {{
     config(
         materialized='incremental',
@@ -100,7 +99,3 @@ select
 from wo_duplicates
 where rn = 1
 group by 1, 2
-
-
-
-
