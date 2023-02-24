@@ -5,7 +5,7 @@
 SELECT *
 FROM {{ ref('stg_io__companies') }}
 WHERE 1=1
-    and (db_name like '%_company'
+    and (comp_db_name like '%_company'
         and is_blank = 0
         and project_type = 'indica'
         and not domain_prefix like '%prod'
