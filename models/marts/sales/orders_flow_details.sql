@@ -12,19 +12,19 @@
 
 with wo_duplicates as (
 	select
-		wol.comp_id,
-		wol.id,
-		wol.order_id,
-		wol."type",
-		wol.sf_guard_user_id,
-		wol.sf_guard_user_name,
-		wol.created_at,
-		max(created_at) over (partition by comp_id, order_id, type) as max_order_timestamp,
+		comp_id,
+		id,
+		order_id,
+		"type",
+		sf_guard_user_id,
+		sf_guard_user_name,
+		created_at,
+		max(created_at) over (partition by comp_id, order_id, "type") as max_order_timestamp,
 		row_number() over (partition by comp_id, order_id, "type" order by created_at desc) as rn
 	from
-		{{ ref('stg_io__warehouse_order_logs') }} wol
+		{{ ref('stg_io__warehouse_order_logs') }}
 	{% if is_incremental() %}
-		where wol.created_at > (select max(max_order_timestamp) from {{ this }})
+		where created_at > (select max(max_order_timestamp) from {{ this }})
 	{% endif %}
 )
 select 
