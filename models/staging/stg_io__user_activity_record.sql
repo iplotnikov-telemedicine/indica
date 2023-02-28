@@ -1,2 +1,2 @@
 SELECT *
-FROM {{ source('staging','user_activity_record') }} 
+FROM {{ source('staging','user_activity_record') }}
