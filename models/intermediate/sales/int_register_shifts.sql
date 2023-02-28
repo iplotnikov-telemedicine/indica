@@ -33,6 +33,7 @@ openings_and_closings as (
         r.comp_id,
         r.id as register_id,
         r.name as register_name,
+        r.office_id,
         register_log.created_at as current_created_at,
         register_log.type as current_type,
         lag(register_log.created_at) over (partition by register_log.comp_id, register_log.register_id order by register_log.created_at) as lag_created_at,
@@ -52,6 +53,7 @@ final as (
         comp_id,
         register_id,
         register_name,
+        office_id,
         lag_created_at as open_at,
         current_created_at as closed_at
 
