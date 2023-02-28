@@ -11,8 +11,8 @@
 
 with register_log as (
 
-    select * 
-    from {{ ref('stg_io__register_log') }}
+    SELECT * 
+    FROM {{ ref('stg_io__register_log') }}
     
     WHERE type in (1, 4)
 
@@ -20,8 +20,8 @@ with register_log as (
 
 registers as (
 
-    select * 
-    from {{ ref('stg_io__registers') }}
+    SELECT * 
+    FROM {{ ref('stg_io__registers') }}
 
     WHERE type = 1  -- only POS registers
     
@@ -34,16 +34,17 @@ openings_and_closings as (
         r.id as register_id,
         r.name as register_name,
         r.office_id,
-        register_log.created_at as current_created_at,
-        register_log.type as current_type,
-        lag(register_log.created_at) over (partition by register_log.comp_id, register_log.register_id order by register_log.created_at) as lag_created_at,
-        lag(register_log.type) over (partition by register_log.comp_id, register_log.register_id order by register_log.created_at) as lag_type
+        rl.created_at as current_created_at,
+        rl.type as current_type,
+        lag(rl.created_at) over (partition by rl.comp_id, rl.register_id order by rl.created_at) as lag_created_at,
+        lag(rl.type) over (partition by rl.comp_id, rl.register_id order by rl.created_at) as lag_type
 
-    FROM register_log
+    FROM register_log rl
 
     INNER JOIN registers r
-        ON register_log.register_id = r.id
-        AND register_log.comp_id = r.comp_id
+        ON rl.register_id = r.id
+        AND rl.comp_id = r.comp_id
+
 
 ),
 
@@ -58,7 +59,7 @@ final as (
         current_created_at as closed_at
 
     FROM openings_and_closings
-
+    
     WHERE lag_type = 1 and current_type = 4
 
 )
