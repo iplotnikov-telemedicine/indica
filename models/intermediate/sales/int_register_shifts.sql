@@ -30,34 +30,41 @@ registers as (
 openings_and_closings as (
     
     SELECT
-        r.comp_id,
-        r.id as register_id,
-        r.name as register_name,
+        comp_id,
+        id as register_id,
         register_log.created_at as current_created_at,
         register_log.type as current_type,
-        lag(register_log.created_at) over (partition by register_log.comp_id, register_log.register_id order by register_log.created_at) as lag_created_at,
-        lag(register_log.type) over (partition by register_log.comp_id, register_log.register_id order by register_log.created_at) as lag_type
+        lag(created_at) over (partition by comp_id, register_id order by created_at) as lag_created_at,
+        lag(type) over (partition by comp_id, register_id order by created_at) as lag_type
 
     FROM register_log
 
-    INNER JOIN registers r
-        ON register_log.register_id = r.id
-        AND register_log.comp_id = r.comp_id
+),
 
+offices as (
+
+    select * 
+    from {{ ref('stg_io__offices') }}
+    
 ),
 
 final as (
 
     SELECT
-        comp_id,
-        register_id,
-        register_name,
-        lag_created_at as open_at,
-        current_created_at as closed_at
+        oac.comp_id,
+        oac.register_id,
+        r.name as register_name,
+        r.office_id,
+        oac.lag_created_at as open_at,
+        oac.current_created_at as closed_at
 
-    FROM openings_and_closings
+    FROM openings_and_closings oac
 
-    WHERE lag_type = 1 and current_type = 4
+    INNER JOIN registers r
+        ON oac.register_id = r.id
+        AND oac.comp_id = r.comp_id
+
+    WHERE oac.lag_type = 1 and oac.current_type = 4
 
 )
 
