@@ -424,6 +424,64 @@ sources:
 
       - name: product_office_qty
         description: consolidated current inventory
+      
+      - name: user_activity_record
+        description: User activity log
+        columns:
+        - name: comp_id
+          description: unique ID for the company
+        - name: id
+          description: unique ID for the log record
+        - name: sf_guard_user_id
+          description: unique user ID
+        - name: type
+          description: action type
+        - name: description
+          description: action description
+        - name: ip
+          description: IP address of logging action
+        - name: created_at
+          description: Datetime when the row was created in the source table
+        - name: updated_at
+          description: Datetime when the row was updated in the source table
+        - name: inserted_at
+          description: Datetime when the row was written in this table
+
+      - name: sf_guard_user_group
+        description: Users groups
+        columns:
+        - name: comp_id
+          description: unique ID for the company
+        - name: user_id
+          description: unique user ID
+        - name: group_id
+          description: unique group ID
+        - name: created_at
+          description: Datetime when the row was created in the source table
+        - name: updated_at
+          description: Datetime when the row was updated in the source table
+        - name: inserted_at
+          description: Datetime when the row was written in this table
+
+      - name: sf_guard_group
+        description: Groups table
+        columns:
+        - name: comp_id
+          description: Unique ID for the company
+        - name: id
+          description: Unique group ID
+        - name: name
+          description: Group name
+        - name: description
+          description: Group description
+        - name: is_main
+          description: boolean flag of main status for group
+        - name: created_at
+          description: Datetime when the row was created in the source table
+        - name: updated_at
+          description: Datetime when the row was updated in the source table
+        - name: inserted_at
+          description: Datetime when the row was written in this table
 
   - name: ext_indica_backend
     description: This is a backend external schema
