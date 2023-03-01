@@ -45,7 +45,7 @@ with wo_duplicates as (
 		wol.sf_guard_user_id,
 		wol.sf_guard_user_name,
 		wol.created_at,
-		max(wol.created_at) over (partition by wol.comp_id, wol.order_id, wol."type") as max_order_timestamp,
+		--max(wol.created_at) over (partition by wol.comp_id, wol.order_id, wol."type") as max_order_timestamp,
 		row_number() over (partition by wol.comp_id, wol.order_id, wol."type" order by wol.created_at desc) as rn
 	from
 		{{ ref('stg_io__warehouse_order_logs') }} wol
@@ -57,7 +57,7 @@ with wo_duplicates as (
 select 
 	comp_id,
 	order_id,
-	max(max_order_timestamp) as max_order_timestamp,
+	max(created_at) as max_order_timestamp,
 	{% for wol_type in wol_types %}
 	max(case when type_name = '{{wol_type}}' then created_at end) as {{wol_type}}_at,
 	max(case when type_name = '{{wol_type}}' then sf_guard_user_name end) as {{wol_type}}_by,
