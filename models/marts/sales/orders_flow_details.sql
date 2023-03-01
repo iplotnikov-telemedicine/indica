@@ -60,7 +60,7 @@ select
 	{% for wol_type in wol_types %}
 	max(case when type_name = '{{wol_type}}' then created_at end) as {{wol_type}}_at,
 	max(case when type_name = '{{wol_type}}' then sf_guard_user_name end) as {{wol_type}}_by,
-	max(case when type_name = '{{wol_type}}' then sf_guard_user_id end) as {{wol_type}}_by_id,
+	max(case when type_name = '{{wol_type}}' then sf_guard_user_id end) as {{wol_type}}_by_id
 	{% if not loop.last %},{% endif %}
 	{% endfor %}
 	max(max_order_timestamp) as max_order_timestamp
