@@ -9,7 +9,7 @@
 }}
 
 
-{% set wol_types = {
+{% set wol_types = [
     "init",
 	"pending",
 	"accepted",
@@ -32,7 +32,7 @@
 	"rejected",
 	"delivery_accepted",
 	"exchanged"
-} %}
+] %}
 
 
 with wo_duplicates as (
