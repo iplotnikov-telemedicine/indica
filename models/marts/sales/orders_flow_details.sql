@@ -45,6 +45,6 @@ select
 	max(case when type_name = '{{wol_type}}' then sf_guard_user_id end) as {{wol_type}}_by_id
 	{% if not loop.last %},{% endif %}
 	{% endfor %}
-from {{ ref('wo_duplicates') }}
+from {{ ref('int_wo_duplicates') }}
 where rn = 1
 group by 1, 2
