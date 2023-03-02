@@ -47,3 +47,7 @@ models:
     bind: false
     staging:
       +materialized: view
+    marts:
+      sales:
+        orders_flow_details:
+          +tags: "skip"
