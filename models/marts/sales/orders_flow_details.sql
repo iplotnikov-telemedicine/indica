@@ -1,7 +1,7 @@
 {{
     config(
         materialized='incremental',
-        incremental_strategy='delete+insert',
+        incremental_strategy='merge',
         unique_key=['comp_id', 'order_id'],
         sort=['comp_id', 'order_id'],
         dist='max_order_timestamp'
