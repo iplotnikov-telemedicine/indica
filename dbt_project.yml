@@ -51,3 +51,7 @@ models:
       sales:
         orders_flow_details:
           +tags: "skip"
+    intermediate:
+      sales:
+        wo_duplicates:
+          +tags: "skip"
