@@ -8,16 +8,17 @@
     )
 }}
 
+with
 {% if is_incremental() %}
-with tmp as (
+tmp as (
 	select comp_id, order_id, "type", max(created_at) as max_created_at
 	from {{ this }}
 	where created_at > dateadd(day,-30,CURRENT_DATE)
 	group by 1,2,3
-)
+),
 {% endif %}
 
-with rn as (
+wol_with_rn as (
 select
 	wol.comp_id,
 	wol.id,
@@ -42,4 +43,4 @@ where true
 		)
 {% endif %}
 )
-select * from rn where rn = 1
+select * from wol_with_rn where rn = 1
