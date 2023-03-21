@@ -7,8 +7,12 @@
     )
 }}
 
-with inventory_daily as (
-    select * from {{ ref('transactions_daily') }}
+with poq as (
+    select * from {{ ref('stg_io__product_office_qty') }}
+),
+
+companies as (
+    select * from {{ ref('stg_io__companies') }}
 ),
 
 products_with_details as (
@@ -19,24 +23,13 @@ offices as (
     select * from {{ ref('stg_io__offices') }}
 ),
 
-grouped as (
-    SELECT
-        comp_id,
-        domain_prefix,
-        office_id,
-        product_id,
-        sum(inventory_turnover) as inventory_current
-    FROM inventory_daily
-    GROUP BY 1, 2, 3, 4
-),
-
 final as (
     SELECT
-        grouped.comp_id,
-        grouped.domain_prefix,
-        grouped.office_id,
+        poq.comp_id,
+        companies.domain_prefix,
+        poq.poq_office_id as office_id,
         offices.office_name,
-        grouped.product_id,
+        poq.poq_prod_id as product_id,
         p.prod_name,
         p.unit,
         p.prod_cost,
@@ -47,13 +40,15 @@ final as (
         p.parent_category,
         p.sub_category_1,
         p.sub_category_2,
-        grouped.inventory_current
-    FROM grouped
+        poq.poq_qty as inventory_current
+    FROM poq
+    LEFT JOIN companies 
+        on poq.comp_id = companies.comp_id
     LEFT JOIN offices
-        on offices.office_id = grouped.office_id
+        on poq.poq_office_id = offices.office_id
     LEFT JOIN products_with_details p 
-        on grouped.comp_id = p.comp_id
-        and grouped.product_id = p.prod_id
+        on poq.comp_id = p.comp_id
+        and poq.poq_prod_id = p.prod_id
 )
 
 SELECT * FROM final
