@@ -32,21 +32,28 @@ parsed as (
 
 ),
 
-unioned as (
-
-    {% for limit_type in var("limit_types") %}
-        SELECT
-            comp_id,
-            '{{ limit_type }}' as limit_type,
-            created_at,
-            json_extract_path_text({{ limit_type }}, 'old') as old_value,
-            json_extract_path_text({{ limit_type }}, 'new') as new_value
+unpivoted as (
+  
+    SELECT
+        comp_id,
+        limit_type,
+        created_at,
+        json_extract_path_text(json_value, 'old') as old_value,
+        json_extract_path_text(json_value, 'new') as new_value
+    FROM (
+        SELECT *
         FROM parsed
-        WHERE {{ limit_type }} IS NOT NULL AND {{ limit_type }} <> ''
-    {% if not loop.last -%} union all {%- endif %}
-    {% endfor %}
+    ) 
+    UNPIVOT (
+        json_value FOR limit_type IN (
+            {% for limit_type in var("limit_types") %}
+                {{ limit_type }} {% if not loop.last -%} , {%- endif %}
+            {% endfor %}
+        )
+    )
+    WHERE json_value <> ''
 
 )
 
-select * from unioned
+select * from unpivoted
 
