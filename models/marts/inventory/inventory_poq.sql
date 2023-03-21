@@ -1,6 +1,10 @@
 {{
     config(
-        materialized='view'
+        materialized='incremental',
+        incremental_strategy='delete+insert',
+        unique_key=['comp_id', 'date', 'product_id', 'office_id'],
+        sort=['comp_id', 'date'],
+        dist='date'
     )
 }}
 
@@ -21,7 +25,10 @@ dates as (
     select date_day, date_day + interval '1 day' as day_end
     from {{ ref('util_dates') }}
     where date_day >= '2023-02-13'::datetime 
-        and date_day <= current_date::datetime
+        and date_day < current_date::datetime
+    {% if is_incremental() %}
+        and date_day > (select max(date)::datetime from {{ this }})
+    {% endif %}
 ),
 
 convert_tz as (

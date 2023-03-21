@@ -15,7 +15,7 @@
 
 {# 'Define a set of inventory transactions on the necessary history range' #}
 with turnovers as (
-    select * from {{ ref('inventory_daily') }}
+    select * from {{ ref('transactions_daily') }}
     where report_date <= '2023-02-13'::date
       and report_date >= '2022-12-01'::date 
 ),

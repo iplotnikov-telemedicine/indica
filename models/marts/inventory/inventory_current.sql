@@ -8,7 +8,7 @@
 }}
 
 with inventory_daily as (
-    select * from {{ ref('inventory_daily') }}
+    select * from {{ ref('transactions_daily') }}
 ),
 
 products_with_details as (
