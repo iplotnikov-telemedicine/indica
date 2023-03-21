@@ -8,7 +8,9 @@
 }}
 
 with poq as (
-    select * from {{ ref('stg_io__product_office_qty') }}
+    select comp_id, poq_office_id, poq_prod_id, sum(poq_qty) as poq_qty
+    from {{ ref('stg_io__product_office_qty') }}
+    group by 1,2,3
 ),
 
 companies as (
@@ -52,5 +54,3 @@ final as (
 )
 
 SELECT * FROM final
-
-
