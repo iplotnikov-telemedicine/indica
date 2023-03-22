@@ -447,6 +447,23 @@ sources:
         - name: inserted_at
           description: Datetime when the row was written in this table
 
+      - name: sf_guard_user
+        description: consolidated sf_guard_user
+
+      - name: sf_guard_user_permission
+        description: consolidated sf_guard_user_permission
+        columns:
+        - name: comp_id
+          description: unique ID for the company
+        - name: user_id
+          description: user id
+        - name: permission_id
+          description: permission id
+        - name: created_at
+          description: timestamp of initial record creating
+        - name: updated_at
+          description: timestamp of latest record updating
+
       - name: sf_guard_user_group
         description: Users groups
         columns:
@@ -464,7 +481,7 @@ sources:
           description: Datetime when the row was written in this table
 
       - name: sf_guard_group
-        description: Groups table
+        description: consolidated sf_guard_group
         columns:
         - name: comp_id
           description: Unique ID for the company
@@ -510,6 +527,26 @@ sources:
 
       - name: package
         description: package
+      
+      - name: sf_guard_permission
+        description: user permissions in IO system
+        columns:
+        - name: id
+          description: permission id
+        - name: name
+          description: permission name
+        - name: description
+          description: that is how permission is represented in user profile in IO
+        - name: full_description
+          description: basically just replicates description
+        - name: type
+          description: frontend or backend
+        - name: zone
+          description: area to which permission is logically related
+        - name: created_at
+          description: timestamp of initial record creating
+        - name: updated_at
+          description: timestamp of latest record updating
 
 
 models:
