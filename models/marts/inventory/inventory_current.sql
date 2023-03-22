@@ -7,10 +7,13 @@
     )
 }}
 
-with poq as (
-    select comp_id, poq_office_id, poq_prod_id, sum(poq_qty) as poq_qty
-    from {{ ref('stg_io__product_office_qty') }}
-    group by 1,2,3
+
+with units as (
+    select * from {{ ref('units_of_weight') }}
+),
+
+poq as (
+    select * from {{ ref('stg_io__product_office_qty') }}
 ),
 
 companies as (
@@ -25,13 +28,24 @@ offices as (
     select * from {{ ref('stg_io__offices') }}
 ),
 
+grouped as (
+    select 
+        p.comp_id,
+        p.poq_office_id,
+        p.poq_prod_id,
+        sum(p.poq_qty * coalesce(u.grams, 1.0)) as poq_qty_grams
+    from poq p
+    left join units u on p.poq_item_type = u.unit
+    group by 1,2,3
+),
+
 final as (
     SELECT
-        poq.comp_id,
+        g.comp_id,
         companies.domain_prefix,
-        poq.poq_office_id as office_id,
+        g.poq_office_id as office_id,
         offices.office_name,
-        poq.poq_prod_id as product_id,
+        g.poq_prod_id as product_id,
         p.prod_name,
         p.unit,
         p.prod_cost,
@@ -42,15 +56,15 @@ final as (
         p.parent_category,
         p.sub_category_1,
         p.sub_category_2,
-        poq.poq_qty as inventory_current
-    FROM poq
+        g.poq_qty_grams as inventory_current
+    FROM grouped g
     LEFT JOIN companies 
-        on poq.comp_id = companies.comp_id
+        on g.comp_id = companies.comp_id
     LEFT JOIN offices
-        on poq.poq_office_id = offices.office_id
+        on g.poq_office_id = offices.office_id
     LEFT JOIN products_with_details p 
-        on poq.comp_id = p.comp_id
-        and poq.poq_prod_id = p.prod_id
+        on g.comp_id = p.comp_id
+        and g.poq_prod_id = p.prod_id
 )
 
 SELECT * FROM final
