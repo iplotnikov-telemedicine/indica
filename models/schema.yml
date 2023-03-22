@@ -3,6 +3,8 @@ version: 2
 sources:
 
   - name: staging
+    database: "{{ target.name }}"
+    schema: source_schema
     description: staging tables gathering cosolidated data from customer schemas
     tables:
       - name: warehouse_orders
