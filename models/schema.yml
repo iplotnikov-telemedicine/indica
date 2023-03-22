@@ -577,7 +577,7 @@ models:
     - name: total_amount
       description: sales after taxes and after discounts
 
-  - name: inventory_daily
+  - name: transactions_daily
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
     tests:
       - dbt_utils.unique_combination_of_columns:

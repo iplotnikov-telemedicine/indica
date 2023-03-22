@@ -7,8 +7,17 @@
     )
 }}
 
-with inventory_daily as (
-    select * from {{ ref('inventory_daily') }}
+
+with units as (
+    select * from {{ ref('units_of_weight') }}
+),
+
+poq as (
+    select * from {{ ref('stg_io__product_office_qty') }}
+),
+
+companies as (
+    select * from {{ ref('stg_io__companies') }}
 ),
 
 products_with_details as (
@@ -20,23 +29,23 @@ offices as (
 ),
 
 grouped as (
-    SELECT
-        comp_id,
-        domain_prefix,
-        office_id,
-        product_id,
-        sum(inventory_turnover) as inventory_current
-    FROM inventory_daily
-    GROUP BY 1, 2, 3, 4
+    select 
+        p.comp_id,
+        p.poq_office_id,
+        p.poq_prod_id,
+        sum(p.poq_qty * coalesce(u.grams, 1.0)) as poq_qty_grams
+    from poq p
+    left join units u on p.poq_item_type = u.unit
+    group by 1,2,3
 ),
 
 final as (
     SELECT
-        grouped.comp_id,
-        grouped.domain_prefix,
-        grouped.office_id,
+        g.comp_id,
+        companies.domain_prefix,
+        g.poq_office_id as office_id,
         offices.office_name,
-        grouped.product_id,
+        g.poq_prod_id as product_id,
         p.prod_name,
         p.unit,
         p.prod_cost,
@@ -47,15 +56,15 @@ final as (
         p.parent_category,
         p.sub_category_1,
         p.sub_category_2,
-        grouped.inventory_current
-    FROM grouped
-    LEFT JOIN offices
-        on offices.office_id = grouped.office_id
-    LEFT JOIN products_with_details p 
-        on grouped.comp_id = p.comp_id
-        and grouped.product_id = p.prod_id
+        g.poq_qty_grams as inventory_current
+    FROM grouped g
+    INNER JOIN companies 
+        on g.comp_id = companies.comp_id
+    INNER JOIN offices
+        on g.poq_office_id = offices.office_id
+    INNER JOIN products_with_details p 
+        on g.comp_id = p.comp_id
+        and g.poq_prod_id = p.prod_id
 )
 
 SELECT * FROM final
-
-
