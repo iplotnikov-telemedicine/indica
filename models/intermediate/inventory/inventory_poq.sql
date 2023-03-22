@@ -54,7 +54,7 @@ join_date as (
         poq_office_id as office_id,
         sum(poq_qty_grams) as inventory_poq
     from convert_tz_units
-    left join dates 
+    inner join dates 
         on dbt_valid_from_tz < day_end
         and coalesce(dbt_valid_to_tz, current_date::datetime + interval '1 day') > day_end 
     where day_end is not null

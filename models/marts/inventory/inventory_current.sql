@@ -58,11 +58,11 @@ final as (
         p.sub_category_2,
         g.poq_qty_grams as inventory_current
     FROM grouped g
-    LEFT JOIN companies 
+    INNER JOIN companies 
         on g.comp_id = companies.comp_id
-    LEFT JOIN offices
+    INNER JOIN offices
         on g.poq_office_id = offices.office_id
-    LEFT JOIN products_with_details p 
+    INNER JOIN products_with_details p 
         on g.comp_id = p.comp_id
         and g.poq_prod_id = p.prod_id
 )
