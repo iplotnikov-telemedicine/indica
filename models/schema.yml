@@ -3,6 +3,8 @@ version: 2
 sources:
 
   - name: staging
+    database: "{{ target.name }}"
+    schema: staging
     description: staging tables gathering cosolidated data from customer schemas
     tables:
       - name: warehouse_orders
@@ -501,6 +503,7 @@ sources:
           description: Datetime when the row was written in this table
 
   - name: ext_indica_backend
+    schema: ext_indica_backend
     description: This is a backend external schema
     tables:
 
