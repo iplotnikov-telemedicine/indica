@@ -46,7 +46,7 @@ final as (
         pat_dob as date_of_birth,
         pat_zip_name as zip_name,
         pat_city_name as city_name,
-        c.state_name as state_name,
+        pat_state_name as state_name,
         pat_created_at_date as created_date,
         pat_last_visit_date as last_visit_date,
         pt.type_name as patient_type,
