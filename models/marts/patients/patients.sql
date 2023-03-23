@@ -44,6 +44,7 @@ final as (
             WHEN pat_gender IN ('Female', 'F', 'female') THEN 'Female'
             ELSE 'Unspecified' END as gender,
         pat_dob as date_of_birth,
+        pat_zip_name as zip_name,
         pat_city_name as city_name,
         c.state_name as state_name,
         pat_created_at_date as created_date,
