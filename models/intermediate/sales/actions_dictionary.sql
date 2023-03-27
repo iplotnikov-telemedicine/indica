@@ -22,7 +22,6 @@ with actions_dictionary as (
     where coalesce(i.date, t.report_date) >= '2022-01-01'::date
         {% if is_incremental() %}
             and coalesce(i.date, t.report_date) > (select max(ctz_date) from {{ this }})
-            or coalesce(i.comp_id, t.comp_id) not in (select distinct comp_id from {{ this }})
         {% endif %}
 )
 
