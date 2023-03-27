@@ -26,4 +26,4 @@ with actions_dictionary as (
         {% endif %}
 )
 
-select * from test.units_of_weight
+select * from actions_dictionary
