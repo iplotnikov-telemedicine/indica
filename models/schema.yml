@@ -676,3 +676,18 @@ models:
       description: Name of the product's sub_category_2   
     - name: inventory_current
       description: The stocks level of the product in this store  
+      tests: 
+        - aggregates_equality:
+            compare_model_name: ref('inventory_poq')
+            compare_model_column: 'inventory_poq'
+            compare_model_where: 'where date = current_date - 1'
+            diff_abs_threshold: 10
+
+  - name: actions_dictionary
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - office_id
+            - product_id
+            - ctz_date
