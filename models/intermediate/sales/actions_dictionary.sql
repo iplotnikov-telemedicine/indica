@@ -30,7 +30,7 @@ actions_dictionary as (
         and i.date = t.report_date
     where coalesce(i.date, t.report_date) >= '2022-01-01'::date
         {% if is_incremental() %}
-            and coalesce(i.date, t.report_date) > (select max(ctz_date) from {{ this }})
+            and coalesce(i.date, t.report_date) >= (select max(ctz_date) from {{ this }})
         {% endif %}
 )
 
