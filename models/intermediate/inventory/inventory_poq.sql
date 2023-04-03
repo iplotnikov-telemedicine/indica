@@ -22,7 +22,6 @@ units as (
 
 snapshots as (
     select * from {{ ref('product_office_qty_snapshot') }}
-    where poq_qty > 0
 ),
 
 dates as (
@@ -31,7 +30,7 @@ dates as (
     where date_day >= '2023-02-13'::datetime 
         and date_day < current_date::datetime
     {% if is_incremental() %}
-        and date_day > (select max(date)::datetime from {{ this }})
+        and date_day >= (select max(date)::datetime from {{ this }})
     {% endif %}
 ),
 
