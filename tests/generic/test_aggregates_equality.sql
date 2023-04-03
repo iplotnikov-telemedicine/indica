@@ -9,14 +9,14 @@
 
 with model as (
     select
-       sum({{ column_name }}) as agg_m
+       nvl(sum({{ column_name }}),0) as agg_m
     from {{ model }}
     {{ current_model_where }}
 ),
 
 compare as (
     select
-        sum({{ compare_model_column }}) as agg_c
+        nvl(sum({{ compare_model_column }}),0) as agg_c
     from {{ compare_model_name }}
     {{ compare_model_where }}
 ),
