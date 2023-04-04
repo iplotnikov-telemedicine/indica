@@ -579,6 +579,16 @@ models:
       description: sales after taxes and before discounts
     - name: total_amount
       description: sales after taxes and after discounts
+    - name: order_id
+      tests: 
+        - aggregates_equality:
+            compare_model_name: stg_io__warehouse_orders
+            compare_model_column: id
+            compare_model_where: where confirmed_at::date = current_date - 1 and amount > 0
+            current_model_where: where confirmed_at::date = current_date - 1
+            aggregate_type: count
+            is_distinct: distinct
+            diff_abs_threshold: 100
 
   - name: transactions_daily
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
@@ -678,9 +688,10 @@ models:
       description: The stocks level of the product in this store  
       tests: 
         - aggregates_equality:
-            compare_model_name: ref('inventory_poq')
-            compare_model_column: 'inventory_poq'
-            compare_model_where: 'where date = current_date - 1'
+            compare_model_name: inventory_poq
+            compare_model_column: inventory_poq
+            compare_model_where: where date = current_date - 1
+            aggregate_type: sum
             diff_abs_threshold: 10
 
   - name: actions_dictionary
