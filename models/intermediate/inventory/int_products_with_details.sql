@@ -53,6 +53,7 @@ final as (
         products.prod_name,
         products.prod_price as prod_cost,
         products.prod_sku,
+        products.twcc,
         products.prod_is_excise as is_excise,
         strain_types.strain_type as strain_type,
         CASE products.brand_product_strain_name WHEN '' THEN NULL ELSE products.brand_product_strain_name END as strain_name,
