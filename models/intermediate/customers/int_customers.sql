@@ -24,5 +24,5 @@ WHERE 1=1
         )
         and comp_is_approved = 1
     )
-    or (comp_id in (10461, 9868))
+    or (comp_id in (10461, 9868, 8585))
 ORDER BY comp_id
