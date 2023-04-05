@@ -449,6 +449,23 @@ sources:
         - name: inserted_at
           description: Datetime when the row was written in this table
 
+      - name: sf_guard_user
+        description: consolidated sf_guard_user
+
+      - name: sf_guard_user_permission
+        description: consolidated sf_guard_user_permission
+        columns:
+        - name: comp_id
+          description: unique ID for the company
+        - name: user_id
+          description: user id
+        - name: permission_id
+          description: permission id
+        - name: created_at
+          description: timestamp of initial record creating
+        - name: updated_at
+          description: timestamp of latest record updating
+
       - name: sf_guard_user_group
         description: Users groups
         columns:
@@ -466,7 +483,7 @@ sources:
           description: Datetime when the row was written in this table
 
       - name: sf_guard_group
-        description: Groups table
+        description: consolidated sf_guard_group
         columns:
         - name: comp_id
           description: Unique ID for the company
@@ -513,6 +530,26 @@ sources:
 
       - name: package
         description: package
+      
+      - name: sf_guard_permission
+        description: user permissions in IO system
+        columns:
+        - name: id
+          description: permission id
+        - name: name
+          description: permission name
+        - name: description
+          description: that is how permission is represented in user profile in IO
+        - name: full_description
+          description: basically just replicates description
+        - name: type
+          description: frontend or backend
+        - name: zone
+          description: area to which permission is logically related
+        - name: created_at
+          description: timestamp of initial record creating
+        - name: updated_at
+          description: timestamp of latest record updating
 
 
 models:
@@ -542,8 +579,18 @@ models:
       description: sales after taxes and before discounts
     - name: total_amount
       description: sales after taxes and after discounts
+    - name: order_id
+      tests: 
+        - aggregates_equality:
+            compare_model_name: stg_io__warehouse_orders
+            compare_model_column: id
+            compare_model_where: where confirmed_at::date = current_date - 1 and amount > 0
+            current_model_where: where confirmed_at::date = current_date - 1
+            aggregate_type: count
+            is_distinct: distinct
+            diff_abs_threshold: 100
 
-  - name: inventory_daily
+  - name: transactions_daily
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -639,3 +686,19 @@ models:
       description: Name of the product's sub_category_2   
     - name: inventory_current
       description: The stocks level of the product in this store  
+      tests: 
+        - aggregates_equality:
+            compare_model_name: inventory_poq
+            compare_model_column: inventory_poq
+            compare_model_where: where date = current_date - 1
+            aggregate_type: sum
+            diff_abs_threshold: 10
+
+  - name: actions_dictionary
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - office_id
+            - product_id
+            - ctz_date

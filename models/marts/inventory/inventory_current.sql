@@ -7,8 +7,18 @@
     )
 }}
 
-with inventory_daily as (
-    select * from {{ ref('inventory_daily') }}
+with poq as (
+    select * from {{ ref('inventory_poq') }}
+    WHERE date = (select max(date) from {{ ref('inventory_poq') }})
+),
+
+actions_dictionary as (
+    select distinct comp_id, office_id, product_id
+    from {{ ref('actions_dictionary') }}
+),
+
+companies as (
+    select * from {{ ref('stg_io__companies') }}
 ),
 
 products_with_details as (
@@ -19,24 +29,13 @@ offices as (
     select * from {{ ref('stg_io__offices') }}
 ),
 
-grouped as (
-    SELECT
-        comp_id,
-        domain_prefix,
-        office_id,
-        product_id,
-        sum(inventory_turnover) as inventory_current
-    FROM inventory_daily
-    GROUP BY 1, 2, 3, 4
-),
-
 final as (
     SELECT
-        grouped.comp_id,
-        grouped.domain_prefix,
-        grouped.office_id,
+        a.comp_id,
+        companies.domain_prefix,
+        a.office_id,
         offices.office_name,
-        grouped.product_id,
+        a.product_id,
         p.prod_name,
         p.unit,
         p.prod_cost,
@@ -47,15 +46,19 @@ final as (
         p.parent_category,
         p.sub_category_1,
         p.sub_category_2,
-        grouped.inventory_current
-    FROM grouped
+        q.inventory_poq as inventory_current
+    FROM actions_dictionary a
+    LEFT JOIN poq q
+        on a.comp_id = q.comp_id
+        and a.office_id = q.office_id
+        and a.product_id = q.product_id
+    LEFT JOIN companies 
+        on a.comp_id = companies.comp_id
     LEFT JOIN offices
-        on offices.office_id = grouped.office_id
+        on a.office_id = offices.office_id
     LEFT JOIN products_with_details p 
-        on grouped.comp_id = p.comp_id
-        and grouped.product_id = p.prod_id
+        on a.comp_id = p.comp_id
+        and a.product_id = p.prod_id
 )
 
 SELECT * FROM final
-
-

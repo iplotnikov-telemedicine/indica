@@ -15,7 +15,7 @@
 
 {# 'Define a set of inventory transactions on the necessary history range' #}
 with turnovers as (
-    select * from {{ ref('inventory_daily') }}
+    select * from {{ ref('transactions_daily') }}
     where report_date <= '2023-02-13'::date
       and report_date >= '2022-12-01'::date 
 ),
@@ -77,7 +77,7 @@ poq_130223 as (
   {# 'Unsatisfiable conditions for incremental update' #}
   where '{{i}}' != '3000-01-01'
   group by 1, 3, 4
-  having sum(inventory_poq) > 0
+  --having sum(inventory_poq) > 0
 
   {# 'Append results for the "i" via "union all"' #}
   {% if not loop.last %}
