@@ -5,19 +5,22 @@
 {% set compare_model_where = kwargs.get('compare_model_where') %}
 {% set current_model_where = kwargs.get('current_model_where') %}
 {% set diff_abs_threshold = kwargs.get('diff_abs_threshold') %}
+{% set aggregate_type = kwargs.get('aggregate_type') %}
+{% set is_distinct = kwargs.get('is_distinct') %}
+
 
 
 with model as (
     select
-       nvl(sum({{ column_name }}),0) as agg_m
+       nvl( {{ aggregate_type }} ({{is_distinct or ''}} ({{ column_name }})) ,0) as agg_m
     from {{ model }}
     {{ current_model_where }}
 ),
 
 compare as (
     select
-        nvl(sum({{ compare_model_column }}),0) as agg_c
-    from {{ compare_model_name }}
+        nvl( {{ aggregate_type }} ({{is_distinct or ''}} ({{ compare_model_column }})) ,0) as agg_c
+    from {{ ref( compare_model_name ) }}
     {{ compare_model_where }}
 ),
 
