@@ -38,6 +38,7 @@ final as (
     SELECT
         order_items.comp_id,
         order_items.id,
+        order_items.product_id,
         (order_items.qty + order_items.qty_free) * order_items.count as returned_quantity,
         order_items.returned_amount,
         order_items.returned_at,
