@@ -60,6 +60,7 @@ final as (
         products.prod_price_type as unit,
         products.net_weight,
         products.brand_id,
+        products.prod_is_hidden as is_hidden,
         products.deleted_at,
         products.custom_cost,
         
