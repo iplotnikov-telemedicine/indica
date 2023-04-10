@@ -376,6 +376,12 @@ sources:
       - name: product_categories
         description: consolidated product categories
 
+      - name: product_price_group
+        description: consolidated product_price_group which is mapping between products and product_prices
+
+      - name: product_prices
+        description: consolidated product_prices
+
       - name: product_vendors
         description: consolidated product vendors
 
