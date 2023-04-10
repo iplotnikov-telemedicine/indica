@@ -44,6 +44,18 @@ strain_types as (
 
 ),
 
+product_price_group as (
+
+    select * from {{ ref('stg_io__product_price_group') }}
+
+),
+
+product_prices as (
+
+    select * from {{ ref('stg_io__product_prices') }}
+
+),
+
 
 final as (
 
@@ -52,6 +64,7 @@ final as (
         products.prod_id,
         products.prod_name,
         products.prod_price as prod_cost,
+        product_prices.price as prod_price,
         products.prod_sku,
         products.twcc,
         products.prod_is_excise as is_excise,
@@ -104,6 +117,16 @@ final as (
 
     LEFT JOIN strain_types
         ON products.strain = strain_types.strain_type_id
+
+    LEFT JOIN product_price_group
+ 	    ON products.prod_id = product_price_group.product_id
+        AND products.comp_id = product_price_group.comp_id
+  
+    INNER JOIN product_prices
+        ON product_price_group.id = product_prices.price_group_id
+        AND product_price_group.comp_id = product_prices.comp_id
+        AND (product_prices.weight_type is NULL OR product_prices.weight_type = 'gram')
+        AND (product_prices.range_from is NULL OR product_prices.range_from = 1)
 
     LEFT JOIN product_categories 
         ON products.prod_category_id = product_categories.id
