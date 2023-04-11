@@ -385,6 +385,9 @@ sources:
       - name: product_vendors
         description: consolidated product vendors
 
+      - name: refund_products
+        description: consolidated refund_products
+
       - name: tax_payment
         description: consolidated tax payments
 
