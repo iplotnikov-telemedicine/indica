@@ -376,8 +376,17 @@ sources:
       - name: product_categories
         description: consolidated product categories
 
+      - name: product_price_group
+        description: consolidated product_price_group which is mapping between products and product_prices
+
+      - name: product_prices
+        description: consolidated product_prices
+
       - name: product_vendors
         description: consolidated product vendors
+
+      - name: refund_products
+        description: consolidated refund_products
 
       - name: tax_payment
         description: consolidated tax payments
@@ -579,6 +588,16 @@ models:
       description: sales after taxes and before discounts
     - name: total_amount
       description: sales after taxes and after discounts
+    - name: order_id
+      tests: 
+        - aggregates_equality:
+            compare_model_name: stg_io__warehouse_orders
+            compare_model_column: id
+            compare_model_where: where confirmed_at::date = current_date - 1 and amount > 0
+            current_model_where: where confirmed_at::date = current_date - 1
+            aggregate_type: count
+            is_distinct: distinct
+            diff_abs_threshold: 100
 
   - name: transactions_daily
     description: data describing daily stocks dynamics and affecting stock-level transactions on the granularity of store and product
@@ -676,3 +695,19 @@ models:
       description: Name of the product's sub_category_2   
     - name: inventory_current
       description: The stocks level of the product in this store  
+      tests: 
+        - aggregates_equality:
+            compare_model_name: inventory_poq
+            compare_model_column: inventory_poq
+            compare_model_where: where date = current_date - 1
+            aggregate_type: sum
+            diff_abs_threshold: 10
+
+  - name: actions_dictionary
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - comp_id
+            - office_id
+            - product_id
+            - ctz_date

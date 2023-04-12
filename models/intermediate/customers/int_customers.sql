@@ -1,5 +1,5 @@
 
-{{ config(materialized='view') }}
+{{ config(materialized='table') }}
 
 
 SELECT *
@@ -12,7 +12,7 @@ WHERE 1=1
         and not domain_prefix like 'test%'
         and not domain_prefix like '%demo%'
         and not comp_email like '%maildrop.cc'
-        and not comp_email like '%indica%'
+        and not comp_email like '%@indicaonline%'
         and not comp_name like 'Blank company%'
         and not comp_name like '%test%'
         and not comp_name like '%Test%'
